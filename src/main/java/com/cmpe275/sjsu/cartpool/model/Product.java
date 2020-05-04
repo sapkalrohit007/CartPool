@@ -1,0 +1,160 @@
+package com.cmpe275.sjsu.cartpool.model;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+public class Product {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private int sku;
+	
+	@Column(nullable = false)
+	private String name;
+	
+	@Column
+	private String description;
+	
+	@Column(name = "img_url")
+	private String imageUrl;
+	
+	@Column
+	private String brand;
+	
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Unit unit;
+	
+	@Column(nullable = false)
+	private double price;
+	
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinTable(
+			name = "product_store", 
+			joinColumns = @JoinColumn(name="product_id"),
+			inverseJoinColumns = @JoinColumn( name="store_id")
+			)
+	@JsonIgnoreProperties({"product"})
+	List<Store>stores;
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinTable(
+			name = "order_product", 
+			joinColumns = @JoinColumn(name="product_id"),
+			inverseJoinColumns = @JoinColumn( name="order_id")
+			)
+	@JsonIgnoreProperties({"products"})
+	List<Orders>orders;
+	
+	public Product() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Product(int sku, String name, String description, String imageUrl, String brand, Unit unit, double price) {
+		super();
+		this.sku = sku;
+		this.name = name;
+		this.description = description;
+		this.imageUrl = imageUrl;
+		this.brand = brand;
+		this.unit = unit;
+		this.price = price;
+	}
+
+	public int getSku() {
+		return sku;
+	}
+
+	public void setSku(int sku) {
+		this.sku = sku;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public String getBrand() {
+		return brand;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public Unit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	
+	
+
+	public List<Store> getStores() {
+		return stores;
+	}
+
+	public void setStores(List<Store> stores) {
+		this.stores = stores;
+	}
+	
+	
+
+	public List<Orders> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Orders> orders) {
+		this.orders = orders;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [sku=" + sku + ", name=" + name + ", description=" + description + ", imageUrl=" + imageUrl
+				+ ", brand=" + brand + ", unit=" + unit + ", price=" + price + "]";
+	}
+	
+}
