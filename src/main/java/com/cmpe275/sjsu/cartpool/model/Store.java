@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -25,8 +27,10 @@ public class Store {
 	private int id;
 	
 	@Column(nullable = false, unique = true)
+	@Size(min=1)
 	private String name;
 	
+	@Valid
 	@Embedded
 	private Address address;
 	
@@ -57,7 +61,7 @@ public class Store {
 		return name;
 	}
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 	public Address getAddress() {
 		return address;

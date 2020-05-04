@@ -1,6 +1,10 @@
 package com.cmpe275.sjsu.cartpool.error;
+import javax.validation.ConstraintViolationException;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -33,6 +37,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(BadRequestException.class)
 	public ResponseEntity<ErrorResponse> handleException(BadRequestException ex){
+		ErrorResponse err=new ErrorResponse();
+		err.setMessage(ex.getMessage());
+		err.setStatus(HttpStatus.BAD_REQUEST.value());
+		err.setTimestamp(System.currentTimeMillis());
+		
+		return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ErrorResponse> handleException(ConstraintViolationException ex){
+		ErrorResponse err=new ErrorResponse();
+		err.setMessage(ex.getMessage());
+		err.setStatus(HttpStatus.BAD_REQUEST.value());
+		err.setTimestamp(System.currentTimeMillis());
+		
+		return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);
+	}
+	
+	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorResponse> handleException(DataIntegrityViolationException ex){
+		ErrorResponse err=new ErrorResponse();
+		err.setMessage(ex.getMessage());
+		err.setStatus(HttpStatus.BAD_REQUEST.value());
+		err.setTimestamp(System.currentTimeMillis());
+		
+		return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(TransactionSystemException.class)
+	public ResponseEntity<ErrorResponse> handleException(TransactionSystemException ex){
 		ErrorResponse err=new ErrorResponse();
 		err.setMessage(ex.getMessage());
 		err.setStatus(HttpStatus.BAD_REQUEST.value());

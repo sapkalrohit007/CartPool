@@ -3,24 +3,30 @@ package com.cmpe275.sjsu.cartpool.model;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Embeddable
 public class Address {
+	
 	@Column(name = "street")
 	@NotNull
+	@Size(min=1)
 	private String street;
 	
 	
 	@Column(name = "city")
 	@NotNull
+	@Size(min=1)
 	private String city;
 	
 	@Column(name = "state")
 	@NotNull
+	@Size(min=1)
 	private String state;
 	
 	@Column(name = "zip")
 	@NotNull
+	@Size(min=1)
 	private String zip;
 	
 	public Address() {
@@ -39,7 +45,7 @@ public class Address {
 	}
 
 	public void setStreet(String street) {
-		this.street = street;
+		this.street = street.trim();
 	}
 
 	public String getCity() {
@@ -47,7 +53,7 @@ public class Address {
 	}
 
 	public void setCity(String city) {
-		this.city = city;
+		this.city = city.trim();
 	}
 
 	public String getState() {
@@ -55,7 +61,7 @@ public class Address {
 	}
 
 	public void setState(String state) {
-		this.state = state;
+		this.state = state.trim();
 	}
 
 	public String getZip() {
@@ -63,7 +69,7 @@ public class Address {
 	}
 
 	public void setZip(String zip) {
-		this.zip = zip;
+		this.zip = zip.trim();
 	}
 
 	@Override
