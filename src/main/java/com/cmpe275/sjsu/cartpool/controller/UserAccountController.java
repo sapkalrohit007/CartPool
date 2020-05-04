@@ -2,8 +2,6 @@ package com.cmpe275.sjsu.cartpool.controller;
 
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cmpe275.sjsu.cartpool.error.AlreadyExistsException;
+import com.cmpe275.sjsu.cartpool.error.BadRequestException;
+import com.cmpe275.sjsu.cartpool.model.Address;
 import com.cmpe275.sjsu.cartpool.model.AuthProvider;
 import com.cmpe275.sjsu.cartpool.model.ConfirmationToken;
 import com.cmpe275.sjsu.cartpool.model.Role;
@@ -21,7 +22,6 @@ import com.cmpe275.sjsu.cartpool.model.User;
 import com.cmpe275.sjsu.cartpool.repository.ConfirmationTokenRepository;
 import com.cmpe275.sjsu.cartpool.repository.UserRepository;
 import com.cmpe275.sjsu.cartpool.requestpojo.RegisterUserRequest;
-import com.cmpe275.sjsu.cartpool.responsepojo.CommonMessage;
 import com.cmpe275.sjsu.cartpool.service.EmailSenderService;
 
 @RestController
@@ -43,11 +43,19 @@ public class UserAccountController {
     @PostMapping("/register")
     public User registerUser(@RequestBody RegisterUserRequest registerUserRequest) throws Exception
     {
-
         Optional<User> existingUser = userRepository.findByEmail(registerUserRequest.getEmail());
+        User existingUserWithGivenName = userRepository.findByName(registerUserRequest.getName());
+        User existingUserWithGivenNickName = userRepository.finByNickName(registerUserRequest.getNickName());
+        
+        if(existingUserWithGivenName != null) {
+        	throw new BadRequestException("Name is already used...");
+        }
+        if(existingUserWithGivenNickName != null) {
+        	throw new BadRequestException("Nick Name is already used..");
+        }
         if(existingUser.isPresent())
         {
-            throw new Exception();
+            throw new AlreadyExistsException("This email ID is already used!!!!");
         }
         else
         {
@@ -55,6 +63,13 @@ public class UserAccountController {
         	user.setEmail(registerUserRequest.getEmail());
         	user.setEmailVerified(false);
         	user.setName(registerUserRequest.getName());
+        	user.setNickName(registerUserRequest.getNickName());
+        	Address address = new Address();
+        	address.setCity(registerUserRequest.getCity());
+        	address.setState(registerUserRequest.getState());
+        	address.setStreet(registerUserRequest.getStreet());
+        	address.setZip(registerUserRequest.getZip());
+        	user.setAddress(address);
         	String encryptedPassword = bcryptPasswordEncoder.encode(registerUserRequest.getPassword());
         	user.setPassword(encryptedPassword);
         	String email = registerUserRequest.getEmail();
@@ -101,5 +116,4 @@ public class UserAccountController {
         }
         return "invalid URL";
     }
-    // getters and setters
 }

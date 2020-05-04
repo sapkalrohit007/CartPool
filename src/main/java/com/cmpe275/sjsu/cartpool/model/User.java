@@ -21,6 +21,9 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String name;
+    
+    @Column(name = "nick_name")
+    private String nickName;
 
     @Column(nullable = false, unique = true)
     @Email
@@ -142,6 +145,22 @@ public class User {
 
 	public void setOrders(List<Orders> orders) {
 		this.orders = orders;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public Pool getPool() {
+		return pool;
+	}
+
+	public void setPool(Pool pool) {
+		this.pool = pool;
 	}
 	
     
