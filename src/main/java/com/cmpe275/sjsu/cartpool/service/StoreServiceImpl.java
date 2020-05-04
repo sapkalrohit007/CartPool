@@ -57,8 +57,12 @@ public class StoreServiceImpl implements StoreService{
 			Store result = storeRepository.save(theStore);
 			return result;
 			
+		}catch(ConstraintViolationException e) {
+			throw new ConstraintViolationException("Invalid request - bad input parameters", null);
+		}catch(DataIntegrityViolationException e) {
+			throw new DataIntegrityViolationException("Invalid request - missing input parameters");
 		}catch(TransactionSystemException e) {
-			throw new TransactionSystemException("Invalid request - missing parameters");
+			throw new TransactionSystemException("Invalid request - bad parameters");
 		}
 		catch(Exception e) {
 			throw new RuntimeException(e.fillInStackTrace());
