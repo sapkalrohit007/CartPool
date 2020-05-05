@@ -19,16 +19,21 @@ public class UserPrincipal implements UserDetails, OAuth2User{
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
-    private Map<String, Object> attributes;    
+    private Map<String, Object> attributes;
+    private String role;
     
    
-	public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+	
+	
+	public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities, String role) {
+		super();
 		this.id = id;
 		this.email = email;
 		this.password = password;
 		this.authorities = authorities;
+		this.role = role;
 	}
-	
+
 	public static UserPrincipal create(User user) {
 		String role =  user.getRole().toString();
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
@@ -38,7 +43,8 @@ public class UserPrincipal implements UserDetails, OAuth2User{
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities
+                authorities,
+                role
         );
     }
 	
@@ -112,5 +118,30 @@ public class UserPrincipal implements UserDetails, OAuth2User{
 	public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+		this.authorities = authorities;
+	}
+	
 	
 }

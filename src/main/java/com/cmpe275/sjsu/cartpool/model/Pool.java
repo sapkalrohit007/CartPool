@@ -3,11 +3,15 @@ package com.cmpe275.sjsu.cartpool.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
@@ -20,7 +24,8 @@ public class Pool {
 	@Id
 	@GeneratedValue(generator="uuid2")
 	@GenericGenerator(name="uuid2", strategy = "uuid2")
-	@Column(name = "uuid",columnDefinition = "BINARY(16)")
+	@Column(name = "uuid", length=36)
+	@Length(min=36, max=36)
 	private String uuid;
 	
 	@Column(nullable = false, unique = true)
@@ -38,11 +43,15 @@ public class Pool {
 	
 	@OneToMany( mappedBy = "pool")
 	@JsonIgnoreProperties({"pool"})
-	private List<User> users;
+	private List<User> members;
 	
-	@OneToMany( mappedBy = "pool")
+	@OneToMany( mappedBy = "pool",cascade = { CascadeType.ALL})
 	@JsonIgnoreProperties({"pool"})
 	private List<ReferenceConfirmation> referenceConfirmation;
+	
+	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "owner_id")
+    private User owner;
 	
 	public Pool() {
 		// TODO Auto-generated constructor stub
@@ -95,6 +104,30 @@ public class Pool {
 
 	public void setZipcode(String zipcode) {
 		this.zipcode = zipcode;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+	
+	public List<User> getMembers() {
+		return members;
+	}
+
+	public void setMembers(List<User> members) {
+		this.members = members;
+	}
+
+	public List<ReferenceConfirmation> getReferenceConfirmation() {
+		return referenceConfirmation;
+	}
+
+	public void setReferenceConfirmation(List<ReferenceConfirmation> referenceConfirmation) {
+		this.referenceConfirmation = referenceConfirmation;
 	}
 
 	@Override
