@@ -1,5 +1,6 @@
 package com.cmpe275.sjsu.cartpool.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.ConstraintViolationException;
@@ -104,6 +105,24 @@ public class StoreServiceImpl implements StoreService{
 		
 	}
 
+	@Override
+	public List<Store> getAllStores() {
+		
+		List<Store> result = storeRepository.findAll();
+		
+		return result;
+	}
+
+	@Override
+	public List<Store> searchStore(String name) {
+		
+		List<Store> result = storeRepository.searchStore(name.toLowerCase());
+		
+		return result;
+		
+	}
+
+	
 	
 	
 }

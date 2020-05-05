@@ -2,13 +2,10 @@ package com.cmpe275.sjsu.cartpool.service;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.apache.tomcat.jni.Poll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
-import com.cmpe275.sjsu.cartpool.model.ConfirmationToken;
 import com.cmpe275.sjsu.cartpool.model.Pool;
 import com.cmpe275.sjsu.cartpool.model.ReferenceConfirmation;
 import com.cmpe275.sjsu.cartpool.model.User;
@@ -74,8 +71,6 @@ public class PoolServiceImpl implements PoolService{
 	@Override
 	public CommonMessage joinPool(UserPrincipal currentUser,String poolName, String referee ) {
 		
-		System.out.println(poolName);
-		System.out.println(referee);
 		Optional<User> user = userRepository.findByEmail(currentUser.getEmail());
 		if(user.get().getPool()!=null) {
 			throw new BadRequestException("You are already part of some pool ..you can not join two pools at the same time");
@@ -202,6 +197,21 @@ public class PoolServiceImpl implements PoolService{
         emailSenderService.sendEmail(mailMessage);	
 		referenceConfirmationRepository.delete(token);
 		return null;
+	}
+
+	@Override
+	public CommonMessage leaveGroup(UserPrincipal userPrincipal) {
+		Optional<User> user = userRepository.findByEmail(userPrincipal.getEmail());
+		if(user.isPresent()) {
+			User currentUser = user.get();
+			Pool pool = currentUser.getPool();
+			if(pool == null) {
+				
+			}else{
+				
+			}
+		}
+		throw new BadRequestException("failed to leave group!!!!");
 	}
 		 
 }

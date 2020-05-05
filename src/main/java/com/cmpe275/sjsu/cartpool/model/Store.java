@@ -1,5 +1,6 @@
 package com.cmpe275.sjsu.cartpool.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,8 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -38,7 +37,7 @@ public class Store {
 	@Embedded
 	private Address address;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinTable(
 			name = "product_store", 
 			joinColumns = @JoinColumn( name="store_id"),
@@ -83,6 +82,58 @@ public class Store {
 	@Override
 	public String toString() {
 		return "Store [id=" + id + ", name=" + name + ", address=" + address + "]";
+	}
+	
+	public void addProduct(Product theProduct, boolean addInOtherRelationship) {
+		
+		if(this.product == null) {
+			this.product = new ArrayList<Product>();
+		}
+		
+		boolean flag = false;
+		int theProductSKU = theProduct.getSku();
+		
+		for(Product tempProduct:this.product) {
+			if(tempProduct.getSku() == theProductSKU) {
+				flag = true;
+				break;
+			}
+		}
+		
+		if(!flag) {
+			this.product.add(theProduct);			
+		}
+		
+		if(addInOtherRelationship) {
+			theProduct.addStore(this, false);
+		}
+		
+	}
+	
+	public void removeProduct(Product theProduct, boolean removeFromOtherRelationship) {
+		
+		if(this.product == null) {
+			this.product = new ArrayList<Product>();
+		}
+		
+		Product existingProduct = null;
+		int theProductSKU = theProduct.getSku();
+		
+		for(Product tempProduct:this.product) {
+			if(tempProduct.getSku() == theProductSKU) {
+				existingProduct = tempProduct;
+				break;
+			}
+		}
+		
+		if(existingProduct!=null) {
+			this.product.remove(existingProduct);
+		}
+		
+		if(removeFromOtherRelationship) {
+			existingProduct.removeStore(this, false);
+		}
+		
 	}
 	
 }

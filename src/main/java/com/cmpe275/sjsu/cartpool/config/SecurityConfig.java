@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			"/swagger-ui.html",
 			"/v2/api-docs",
 			"/webjars/**"};
-	
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(customerDetailsService)
@@ -66,8 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
 			.authorizeRequests()
-				.antMatchers("/auth/**","/user/**","/pool/confirm-request-owner/**","/pool/confirm-request/**","/reject-request/**")
-					.permitAll().antMatchers(AUTH_WHITELIST).permitAll()
+				.antMatchers("/auth/**","/user/**","/pool/confirm-request-owner/**","/pool/confirm-request/**","/pool/reject-request/**")
+					.permitAll()
+				.antMatchers(AUTH_WHITELIST).permitAll()
 				.anyRequest()
 					.authenticated();
 		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -89,5 +90,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter();
     }
-
+    
 }

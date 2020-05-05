@@ -11,4 +11,5 @@ public interface PoolService {
 	public String confirmRequestAdmin(String token);
 	public String confirmRequestRefree(String confirmationToken);
 	public String rejectRequestRefree(String confirmationToken);
+	public CommonMessage leaveGroup(UserPrincipal currentUser);
 }

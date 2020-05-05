@@ -1,4 +1,6 @@
 package com.cmpe275.sjsu.cartpool.model;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,7 +19,7 @@ import javax.persistence.ManyToMany;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-public class Product {
+public class Product{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -64,9 +66,8 @@ public class Product {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Product(int sku, String name, String description, String imageUrl, String brand, Unit unit, double price) {
-		super();
-		this.sku = sku;
+	public Product( String name, String description, String imageUrl, String brand, Unit unit, double price) {
+//		this.sku = sku;
 		this.name = name;
 		this.description = description;
 		this.imageUrl = imageUrl;
@@ -156,5 +157,57 @@ public class Product {
 		return "Product [sku=" + sku + ", name=" + name + ", description=" + description + ", imageUrl=" + imageUrl
 				+ ", brand=" + brand + ", unit=" + unit + ", price=" + price + "]";
 	}
+	
+	
+	public void addStore(Store theStore, boolean addInOtherRelationship) {
+		
+		if(this.stores == null) {
+			this.stores = new ArrayList<Store>();
+		}
+		
+		boolean flag = false;
+		int theStoreId = theStore.getId();
+		
+		for(Store tempStore:this.stores) {
+			if(tempStore.getId() == theStoreId) {
+				flag = true;
+				break;
+			}
+		}
+		
+		if(!flag) {
+			this.stores.add(theStore);			
+		}
+		
+		if(addInOtherRelationship) {
+			theStore.addProduct(this, false);
+		}
+	}
+	
+	public void removeStore(Store theStore, boolean removeFromOtherRelationship) {
+		
+		if(this.stores == null) {
+			this.stores = new ArrayList<Store>();
+		}
+		
+		Store existingStore = null;
+		int theStoreId = theStore.getId();
+		
+		for(Store tempStore:this.stores) {
+			if(tempStore.getId() == theStoreId) {
+				existingStore = tempStore;
+				break;
+			}
+		}
+		
+		if(existingStore!=null) {
+			this.stores.remove(existingStore);
+		}
+		
+		if(removeFromOtherRelationship) {
+			existingStore.addProduct(this, false);
+		}
+		
+	} 
 	
 }
