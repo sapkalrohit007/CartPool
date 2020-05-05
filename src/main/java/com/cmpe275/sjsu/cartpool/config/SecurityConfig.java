@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
 			.authorizeRequests()
-				.antMatchers("/auth/**","/user/**")
+				.antMatchers("/auth/**","/user/**","/pool/confirm-request-owner/**","/pool/confirm-request/**","/pool/reject-request/**")
 					.permitAll()
 				.anyRequest()
 					.authenticated();
@@ -80,4 +80,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter();
     }
+    
 }

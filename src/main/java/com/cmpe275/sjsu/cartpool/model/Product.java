@@ -209,6 +209,6 @@ public class Product{
 			existingStore.addProduct(this, false);
 		}
 		
-	}
+	} 
 	
 }

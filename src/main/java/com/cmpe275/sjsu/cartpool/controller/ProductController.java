@@ -15,11 +15,28 @@ public class ProductController
     @Autowired
     ProductService productService;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public List<Product> getProducts()
     {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/sku={sku}")
+    public Product getProductBySku(@PathVariable int sku)
+    {
+        return productService.getProductById(sku);
+    }
+
+    @GetMapping("/storeid={storeId}")
+    public List<Product> getProductByStoreId(@PathVariable int storeId)
+    {
+        return productService.getProductsInStore(storeId);
+    }
+
+    @GetMapping("/name={productName}")
+    public List<Product> getProductByName(@PathVariable String productName)
+    {
+        return productService.getProductByName(productName);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -37,9 +54,9 @@ public class ProductController
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{productId}")
-    public Product deleteProduct(@PathVariable int productId)
+    @DeleteMapping("/{sku}")
+    public Product deleteProduct(@PathVariable int sku)
     {
-        return productService.deleteProduct(productId);
+        return productService.deleteProduct(sku);
     }
 }

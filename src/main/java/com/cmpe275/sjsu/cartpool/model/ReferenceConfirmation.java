@@ -13,10 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -37,7 +35,11 @@ public class ReferenceConfirmation {
     @Column(nullable = false, name = "is_confirmed")
     private Boolean isConfirmed;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER,cascade = {
+			CascadeType.DETACH,
+			CascadeType.MERGE,
+			CascadeType.PERSIST,
+			CascadeType.REFRESH})
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
     
@@ -58,6 +60,45 @@ public class ReferenceConfirmation {
         this.user = user;
         createdDate = new Date();
         confirmationToken = UUID.randomUUID().toString();
+        isConfirmed = false;
     }
+	public long getTokenid() {
+		return tokenid;
+	}
+	public void setTokenid(long tokenid) {
+		this.tokenid = tokenid;
+	}
+	public String getConfirmationToken() {
+		return confirmationToken;
+	}
+	public void setConfirmationToken(String confirmationToken) {
+		this.confirmationToken = confirmationToken;
+	}
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+	public Boolean getIsConfirmed() {
+		return isConfirmed;
+	}
+	public void setIsConfirmed(Boolean isConfirmed) {
+		this.isConfirmed = isConfirmed;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	public Pool getPool() {
+		return pool;
+	}
+	public void setPool(Pool pool) {
+		this.pool = pool;
+	}
+	
+    
 
 }

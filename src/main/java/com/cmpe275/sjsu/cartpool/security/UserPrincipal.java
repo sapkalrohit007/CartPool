@@ -26,7 +26,6 @@ public class UserPrincipal implements UserDetails, OAuth2User{
 	
 	
 	public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities, String role) {
-		super();
 		this.id = id;
 		this.email = email;
 		this.password = password;
@@ -111,7 +110,6 @@ public class UserPrincipal implements UserDetails, OAuth2User{
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return String.valueOf(id);
 	}
 	
