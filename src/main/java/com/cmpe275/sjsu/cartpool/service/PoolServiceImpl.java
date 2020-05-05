@@ -205,10 +205,13 @@ public class PoolServiceImpl implements PoolService{
 		if(user.isPresent()) {
 			User currentUser = user.get();
 			Pool pool = currentUser.getPool();
-			if(pool == null) {
-				
+			if(pool != null) {
+				pool.removeMember(currentUser);
+				currentUser.setPool(null);
+				userRepository.save(currentUser);
+				return new CommonMessage("You have successfully left the group");
 			}else{
-				
+				throw new BadRequestException("You are not part of any group!!!!");
 			}
 		}
 		throw new BadRequestException("failed to leave group!!!!");

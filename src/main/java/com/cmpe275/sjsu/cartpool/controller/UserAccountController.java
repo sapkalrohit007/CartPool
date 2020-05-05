@@ -30,6 +30,7 @@ public class UserAccountController {
     @RequestMapping(value="/confirm-account", method= {RequestMethod.GET, RequestMethod.POST})
     public String confirmUserAccount(@RequestParam("token")String confirmationToken)
     {
+       System.out.println(confirmationToken);
        return userService.confirmUserAccount(confirmationToken);
     }
     
