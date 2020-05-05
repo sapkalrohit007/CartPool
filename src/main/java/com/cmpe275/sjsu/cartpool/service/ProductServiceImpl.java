@@ -1,21 +1,33 @@
 package com.cmpe275.sjsu.cartpool.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
 import com.cmpe275.sjsu.cartpool.error.NotFoundException;
 import com.cmpe275.sjsu.cartpool.model.Orders;
 import com.cmpe275.sjsu.cartpool.model.Product;
+import com.cmpe275.sjsu.cartpool.model.Store;
+import com.cmpe275.sjsu.cartpool.model.Unit;
 import com.cmpe275.sjsu.cartpool.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import com.cmpe275.sjsu.cartpool.repository.StoreRepository;
+import com.cmpe275.sjsu.cartpool.requestpojo.ProductRequest;
 
 @Service
 public class ProductServiceImpl implements ProductService{
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
+    
+    @Autowired
+    private StoreRepository storeRepository;
 
     @Override
     public List<Product> getAllProducts() {
@@ -23,8 +35,50 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Product addProduct(Product product) {
-        return productRepository.save(product);
+    public Product addProduct(ProductRequest productRequest) {
+    	
+    	String name = productRequest.getName().trim();
+    	String unitType = productRequest.getUnit().trim();
+    	
+    	if(name == null || (name != null && name == "")) {
+    		throw new BadRequestException("Invalid name parameter");
+    	}
+    	
+    	if(unitType == null || (unitType != null && unitType == "")) {
+    		throw new BadRequestException("Invalid unit parameter");
+    	}
+    	
+    	String description = productRequest.getDescription();
+    	String imageUrl = productRequest.getImageUrl();
+    	String brand = productRequest.getBrand();
+    	Double price = productRequest.getPrice();
+       	
+    	Unit unit = Unit.valueOf(unitType);
+    	
+    	List<Store> stores = new ArrayList<Store>();
+    	
+    	List<Integer> storeIds = productRequest.getStores();
+    	
+    	for(Integer storeId : storeIds) {
+    		
+    		Optional<Store> theStore = storeRepository.findById(storeId);
+    		
+    		if(theStore.isPresent()) {
+    			stores.add(theStore.get());
+    		}
+    		
+    	}
+    	
+    	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
+    	
+    	theProduct.setStores(stores);
+    	
+    	try {
+    		return productRepository.save(theProduct);
+    	}catch(BadRequestException e) {
+    		throw new BadRequestException("Invalid input parameters");
+    	}
+        
     }
 
     @Override
@@ -38,11 +92,43 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Product updateProduct(Product product) {
-        Optional<Product> isProduct = productRepository.findById(product.getSku());
-        if(isProduct.isPresent())
-            return productRepository.save(product);
-        else
+    public Product updateProduct(ProductRequest productRequest) {
+        Optional<Product> isProduct = productRepository.findById(productRequest.getSku());
+        if(isProduct.isPresent()) {
+        	
+        	String name = productRequest.getName().trim();
+        	String unitType = productRequest.getUnit().trim();
+        	
+        	if(name == null || (name != null && name == "")) {
+        		throw new BadRequestException("Invalid name parameter");
+        	}
+        	
+        	if(unitType == null || (unitType != null && unitType == "")) {
+        		throw new BadRequestException("Invalid unit parameter");
+        	}
+        	
+        	String description = productRequest.getDescription();
+        	String imageUrl = productRequest.getImageUrl();
+        	String brand = productRequest.getBrand();
+        	Double price = productRequest.getPrice();
+           	
+        	Unit unit = Unit.valueOf(unitType);
+        	
+        	Product existingProduct = isProduct.get();
+        	
+        	List<Store> stores = updatedStores(existingProduct,productRequest.getStores());
+        	
+        	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
+        	theProduct.setSku(productRequest.getSku());
+        	theProduct.setStores(stores);
+        	
+        	try {
+        		return productRepository.save(theProduct);
+        	}catch(BadRequestException e) {
+        		throw new BadRequestException("Invalid input parameters");
+        	}
+        	
+        }else
             throw new NotFoundException("Product Not Found");
     }
 
@@ -75,5 +161,45 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<Product> getProductByName(String name) {
         return productRepository.readProductsByName(name);
+    }
+    
+    private List<Store> updatedStores(Product existingProduct, List<Integer> storeIdsRequest){
+    	
+    	List<Store> existingStores = existingProduct.getStores();
+    	Set<Integer> storeIdsRequestSet = new HashSet<Integer>(storeIdsRequest);
+    	Set<Integer> existingStoreIds = new HashSet<Integer>();
+    	List<Store> removeStoresFromProduct = new ArrayList<Store>();
+    	
+    	Iterator<Store> iterator = existingStores.iterator();
+    	
+    	while(iterator.hasNext()) {
+    		Store theStore = iterator.next();
+    		
+    		if(!storeIdsRequestSet.contains(theStore.getId())) {
+    			removeStoresFromProduct.add(theStore);
+    		}else {
+    			existingStoreIds.add(theStore.getId());
+    		}
+    		
+    	}
+    	
+    	for(Store theStore : removeStoresFromProduct) {
+    		existingProduct.removeStore(theStore, true);
+    	}
+    	
+    	
+    	for(Integer storeId : storeIdsRequestSet) {
+    		
+    		if(!existingStoreIds.contains(storeId)) {
+    			Optional<Store> theStore = storeRepository.findById(storeId);
+        		
+        		if(theStore.isPresent()) {
+        			existingProduct.addStore(theStore.get(), true);
+        		}
+    		}
+    		
+    	}
+    	
+    	return existingProduct.getStores();
     }
 }

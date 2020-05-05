@@ -37,7 +37,7 @@ public class Store {
 	@Embedded
 	private Address address;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinTable(
 			name = "product_store", 
 			joinColumns = @JoinColumn( name="store_id"),
