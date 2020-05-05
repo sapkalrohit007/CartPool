@@ -1,6 +1,7 @@
 package com.cmpe275.sjsu.cartpool.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -134,5 +135,18 @@ public class Pool {
 	public String toString() {
 		return "Pool [uuid=" + uuid + ", name=" + name + ", neighbourhood=" + neighbourhood + ", description="
 				+ description + ", zipcode=" + zipcode + "]";
+	}
+	
+	public void addReferenceConfirmation(ReferenceConfirmation referenceConfirmation) {
+		if(this.referenceConfirmation == null) {
+			this.referenceConfirmation = new ArrayList<ReferenceConfirmation>(); 
+		}
+		this.referenceConfirmation.add(referenceConfirmation);
+	}
+	public void addMember(User user) {
+		if(this.members == null) {
+			this.members = new ArrayList<User>();
+		}
+		this.members.add(user);
 	}
 }
