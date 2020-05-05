@@ -35,4 +35,11 @@ public class ProductController
     {
         return productService.updateProduct(product);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{productId}")
+    public Product deleteProduct(@PathVariable int productId)
+    {
+        return productService.deleteProduct(productId);
+    }
 }
