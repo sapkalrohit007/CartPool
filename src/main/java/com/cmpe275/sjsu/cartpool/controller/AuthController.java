@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import com.cmpe275.sjsu.cartpool.requestpojo.LoginRequest;
 import com.cmpe275.sjsu.cartpool.responsepojo.JWTResponse;
 import com.cmpe275.sjsu.cartpool.security.TokenProvider;
+import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 
 @RestController
 @RequestMapping("/auth") 
@@ -32,7 +33,9 @@ public class AuthController {
 		
 		String token = tokenProvider.createToken(authentication);
 		
-		JWTResponse response = new JWTResponse(token);
+		 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+		 
+		JWTResponse response = new JWTResponse(token,userPrincipal.getRole());
 		
 		return response;
 	}
