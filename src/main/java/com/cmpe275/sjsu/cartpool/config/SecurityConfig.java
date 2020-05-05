@@ -19,6 +19,7 @@ import com.cmpe275.sjsu.cartpool.security.RestAuthenticationEntryPoint;
 import com.cmpe275.sjsu.cartpool.security.TokenAuthenticationFilter;
 
 import org.springframework.security.config.BeanIds;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +32,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	CustomUserDetailsService customerDetailsService;
+
+	private static final String[] AUTH_WHITELIST = {
+
+			// -- swagger ui
+			"/swagger-resources/**",
+			"/swagger-ui.html",
+			"/v2/api-docs",
+			"/webjars/**"};
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -58,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
 			.authorizeRequests()
 				.antMatchers("/auth/**","/user/**","/pool/confirm-request-owner/**","/pool/confirm-request/**","/reject-request/**")
-					.permitAll()
+					.permitAll().antMatchers(AUTH_WHITELIST).permitAll()
 				.anyRequest()
 					.authenticated();
 		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -80,5 +89,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter();
     }
-    
+
 }
