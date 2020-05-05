@@ -28,6 +28,16 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public Product getProductById(int productId)
+    {
+        Optional<Product> isProduct = productRepository.findById(productId);
+        if(isProduct.isPresent())
+            return isProduct.get();
+        else
+            throw new NotFoundException("Product Not found");
+    }
+
+    @Override
     public Product updateProduct(Product product) {
         Optional<Product> isProduct = productRepository.findById(product.getSku());
         if(isProduct.isPresent())
@@ -55,5 +65,15 @@ public class ProductServiceImpl implements ProductService{
         }
         else
             throw new NotFoundException("Product Not Found");
+    }
+
+    @Override
+    public List<Product> getProductsInStore(int storeId) {
+        return productRepository.readProductsByStores(storeId);
+    }
+
+    @Override
+    public List<Product> getProductByName(String name) {
+        return productRepository.readProductsByName(name);
     }
 }
