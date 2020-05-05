@@ -1,7 +1,6 @@
 package com.cmpe275.sjsu.cartpool.service;
 
 import com.cmpe275.sjsu.cartpool.model.Product;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
