@@ -1,5 +1,7 @@
 package com.cmpe275.sjsu.cartpool.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,14 +11,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cmpe275.sjsu.cartpool.error.NotFoundException;
+import com.cmpe275.sjsu.cartpool.model.Product;
 import com.cmpe275.sjsu.cartpool.model.Store;
 import com.cmpe275.sjsu.cartpool.service.StoreService;
 
 @RestController
 @RequestMapping("/store")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class StoreController {
 	
 	/*Exceptions thrown by this class
@@ -30,6 +34,7 @@ public class StoreController {
 	private StoreService storeService;
 	
 	@GetMapping("/{storeId}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Store getStore(@PathVariable int storeId) {
 		
 		Store theStore = storeService.getStore(storeId);
@@ -38,6 +43,7 @@ public class StoreController {
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Store createStore(@RequestBody Store theStore) {
 		
 		Store resultStore = storeService.createStore(theStore);
@@ -46,6 +52,7 @@ public class StoreController {
 	}
 	
 	@PutMapping
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Store updateStore(@RequestBody Store theStore) {
 		
 		Store resultStore = storeService.updateStore(theStore);
@@ -55,9 +62,58 @@ public class StoreController {
 	
 	
 	@DeleteMapping("/{storeId}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Store deleteStore(@PathVariable int storeId) {
 		
 		return storeService.deleteStore(storeId);
 		
 	}
+	
+	@GetMapping
+	@PreAuthorize("hasRole('ROLE_POOLER')")
+	public List<Store> getAllStores(){
+		
+		List<Store> result =  storeService.getAllStores();
+		
+		return result;
+	}
+	
+	
+	@GetMapping("/search")
+	@PreAuthorize("hasRole('ROLE_POOLER')")
+	public List<Store> searchStore(
+			@RequestParam(value="name",required=true) String name
+			){
+		
+		List<Store> result =  storeService.searchStore(name);
+		
+		return result;
+		
+	}
+	
+//	@PutMapping("/{storeId}/product")
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	public Store updateProducts(
+//			@PathVariable("storeId") int storeId,
+//			@RequestBody Store newStore) {
+//		
+//		Store existingStore = storeService.getStore(storeId);
+//		
+//		//remove the prev products
+//		List<Product> exisingStoreProducts = existingStore.getProduct();
+//		for(Product tempProduct : exisingStoreProducts) {
+//			tempProduct.removeStore(existingStore, true);	
+//		}
+//		
+//		//add the new products
+//		List<Product> newStoreProducts = newStore.getProduct();
+//		for(Product tempProduct : newStoreProducts) {
+//			tempProduct.addStore(newStore, true);	
+//		}
+//		
+//		Store result = storeService.updateStore(newStore);
+//		
+//		return result;
+//	}
+	
 }
