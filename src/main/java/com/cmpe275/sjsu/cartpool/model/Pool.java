@@ -149,4 +149,7 @@ public class Pool {
 		}
 		this.members.add(user);
 	}
+	public void removeMember(User user) {
+		this.members.remove(user);
+	}
 }

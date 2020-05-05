@@ -12,6 +12,7 @@ import org.springframework.transaction.TransactionSystemException;
 
 import com.cmpe275.sjsu.cartpool.error.AlreadyExistsException;
 import com.cmpe275.sjsu.cartpool.error.NotFoundException;
+import com.cmpe275.sjsu.cartpool.model.Product;
 import com.cmpe275.sjsu.cartpool.model.Store;
 import com.cmpe275.sjsu.cartpool.repository.StoreRepository;
 
@@ -95,6 +96,13 @@ public class StoreServiceImpl implements StoreService{
 		}else {
 			try {
 				Store theStore = existingStore.get();
+				
+				List<Product> products = theStore.getProduct();
+				
+				for(Product theProduct : products) {
+					theProduct.removeStore(theStore, false);
+				}
+				
 				storeRepository.delete(theStore);
 				return theStore;
 			}catch(Exception e) {

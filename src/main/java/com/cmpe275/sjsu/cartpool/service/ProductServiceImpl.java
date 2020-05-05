@@ -141,6 +141,12 @@ public class ProductServiceImpl implements ProductService{
             List<Orders> orders = product.getOrders();
             if(orders.isEmpty())
             {
+            	List<Store> stores = product.getStores();
+            	
+            	for(Store theStore : stores) {
+            		theStore.removeProduct(product, false);
+            	}
+            	
                 productRepository.deleteById(productId);
                 return product;
             }

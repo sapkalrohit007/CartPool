@@ -47,6 +47,12 @@ public class PoolController {
 		
 	}
 	
+	@PostMapping("/leavepool")
+	@PreAuthorize("hasRole('POOLER')")
+	public CommonMessage leavePool(@CurrentUser UserPrincipal currentUser) {
+		return poolService.leaveGroup(currentUser);
+	}
+	
 	@RequestMapping(value="/confirm-request-owner", method= {RequestMethod.GET, RequestMethod.POST})
 	public String confirmRequestAdmin(@RequestParam("token")String confirmationToken) {
 		return poolService.confirmRequestAdmin(confirmationToken);
