@@ -97,11 +97,16 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public String confirmUserAccount(String confirmationToken) {
 	 	ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+	 	System.out.println("after");
         System.out.println(token);
         if(token != null)
         {
+        	System.out.println("before");
+        	System.out.println(token.getUser().getEmail());
+        	System.out.println("after");
             Optional<User> user = userRepository.findByEmail(token.getUser().getEmail());
             if(user.isPresent()) {
+            	System.out.println("inside");
             	User verfiedUser = user.get();
             	verfiedUser.setEmailVerified(true);
             	userRepository.save(verfiedUser);
