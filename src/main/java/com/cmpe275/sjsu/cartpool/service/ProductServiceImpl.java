@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
 import com.cmpe275.sjsu.cartpool.error.NotFoundException;
-import com.cmpe275.sjsu.cartpool.model.Orders;
+import com.cmpe275.sjsu.cartpool.model.OrderDetails;
 import com.cmpe275.sjsu.cartpool.model.Product;
 import com.cmpe275.sjsu.cartpool.model.Store;
 import com.cmpe275.sjsu.cartpool.model.Unit;
@@ -137,8 +137,10 @@ public class ProductServiceImpl implements ProductService{
         System.out.println(isProduct.get().getStores());
         if (isProduct.isPresent())
         {
+
             Product existingProduct = isProduct.get();
-            List<Orders> orders = existingProduct.getOrders();
+            List<OrderDetails> orders = existingProduct.getOrderDetail();
+            
             if(orders.isEmpty())
             {
             	List<Store> stores = existingProduct.getStores();
