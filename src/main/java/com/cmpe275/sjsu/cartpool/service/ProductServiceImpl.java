@@ -58,17 +58,18 @@ public class ProductServiceImpl implements ProductService{
     	List<Store> stores = new ArrayList<Store>();
     	
     	List<Integer> storeIds = productRequest.getStores();
-    	
-    	for(Integer storeId : storeIds) {
-    		
-    		Optional<Store> theStore = storeRepository.findById(storeId);
-    		
-    		if(theStore.isPresent()) {
-    			stores.add(theStore.get());
-    		}
-    		
-    	}
-    	
+
+    	if (storeIds != null && !storeIds.isEmpty()) {
+			for (Integer storeId : storeIds) {
+
+				Optional<Store> theStore = storeRepository.findById(storeId);
+
+				if (theStore.isPresent()) {
+					stores.add(theStore.get());
+				}
+
+			}
+		}
     	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
     	
     	theProduct.setStores(stores);

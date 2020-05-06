@@ -70,7 +70,6 @@ public class StoreController {
 	}
 	
 	@GetMapping
-	@PreAuthorize("hasRole('ROLE_POOLER')")
 	public List<Store> getAllStores(){
 		
 		List<Store> result =  storeService.getAllStores();
@@ -80,7 +79,6 @@ public class StoreController {
 	
 	
 	@GetMapping("/search")
-	@PreAuthorize("hasRole('ROLE_POOLER')")
 	public List<Store> searchStore(
 			@RequestParam(value="name",required=true) String name
 			){
