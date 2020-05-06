@@ -15,4 +15,5 @@ public interface PoolService {
 	public String rejectRequestRefree(String confirmationToken);
 	public CommonMessage leaveGroup(UserPrincipal currentUser);
 	public List<Pool> getPool(String poolName, String neighborhoodName, String zipcode);
+	public List<Pool> getAllPool();
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 
 import com.cmpe275.sjsu.cartpool.error.AlreadyExistsException;
+import com.cmpe275.sjsu.cartpool.error.BadRequestException;
 import com.cmpe275.sjsu.cartpool.error.NotFoundException;
 import com.cmpe275.sjsu.cartpool.model.Product;
 import com.cmpe275.sjsu.cartpool.model.Store;
@@ -49,14 +50,29 @@ public class StoreServiceImpl implements StoreService{
 	@Override
 	public Store updateStore(Store theStore) {
 		
+		System.out.println(theStore.getId());
+		System.out.println(theStore.getName());
+		System.out.println(theStore.getAddress());
+		
 		try {			
 			Optional<Store> existingStore = storeRepository.findById(theStore.getId());
 			
 			if(!existingStore.isPresent()) {
 				throw new NotFoundException("Store not found");
 			}
+						
+			Optional<Store> exisingStoreWithName = storeRepository.findByName(theStore.getName());
+
 			
-			Store result = storeRepository.save(theStore);
+			if(!exisingStoreWithName.isPresent() && exisingStoreWithName.get().getId() != theStore.getId()) {
+				throw new BadRequestException("Store with same name already present");
+			}
+			
+			existingStore.get().setAddress(theStore.getAddress());
+			
+			existingStore.get().setName(theStore.getName());
+			
+			Store result = storeRepository.save(existingStore.get());
 			return result;
 			
 		}catch(ConstraintViolationException e) {

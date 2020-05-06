@@ -236,5 +236,10 @@ public class PoolServiceImpl implements PoolService{
 		}
 		throw new BadRequestException("Missing or Invalid parameters");
 	}
+
+	@Override
+	public List<Pool> getAllPool() {
+		return poolRepository.findAll();
+	}
 		 
 }

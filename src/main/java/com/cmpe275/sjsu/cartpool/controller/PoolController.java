@@ -79,6 +79,11 @@ public class PoolController {
 		return poolService.getPool(poolName,neighborhoodName,zipCode);
 	}
 	
+	@GetMapping("/allpools")
+	public List<Pool> getPoolByName(){
+		return poolService.getAllPool();
+	}
+	
 	
 }
 
