@@ -222,5 +222,12 @@ public class Product{
 		}
 		
 	} 
+	public void addOrderDetail(OrderDetails orderDetail) {
+		if(this.orderDetail == null) {
+			this.orderDetail = new ArrayList<OrderDetails>();
+		}
+		this.orderDetail.add(orderDetail);
+	}
+	
 	
 }

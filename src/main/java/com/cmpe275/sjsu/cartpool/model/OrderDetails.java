@@ -25,7 +25,7 @@ public class OrderDetails {
 	private Orders order;
 	
 	@ManyToOne(fetch = FetchType.LAZY,cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "product_id")
 	@JsonIgnoreProperties({"orderDetail"})
 	private Product product;
 	

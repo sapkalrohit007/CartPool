@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -48,6 +49,11 @@ public class Store {
 	public Store() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	@OneToMany(mappedBy = "store")
+	@JsonIgnoreProperties({"store"})
+	List<Orders>orders;
+	
 	public Store(int id, String name, Address address) {
 		super();
 		this.id = id;
@@ -110,6 +116,13 @@ public class Store {
 		
 	}
 	
+	
+	public List<Orders> getOrders() {
+		return orders;
+	}
+	public void setOrders(List<Orders> orders) {
+		this.orders = orders;
+	}
 	public void removeProduct(Product theProduct, boolean removeFromOtherRelationship) {
 		
 		if(this.product == null) {
@@ -134,6 +147,13 @@ public class Store {
 			existingProduct.removeStore(this, false);
 		}
 		
+	}
+	
+	public void addOrder(Orders order) {
+		if(this.orders == null) {
+			this.orders = new ArrayList<Orders>();
+		}
+		this.orders.add(order);
 	}
 	
 }

@@ -1,5 +1,6 @@
 package com.cmpe275.sjsu.cartpool.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -176,6 +177,13 @@ public class User {
 
 	public void setPool(Pool pool) {
 		this.pool = pool;
+	}
+	
+	public void addOrder(Orders order) {
+		if(this.orders==null) {
+			this.orders=new ArrayList<Orders>();
+		}
+		this.orders.add(order);
 	}
 	
     

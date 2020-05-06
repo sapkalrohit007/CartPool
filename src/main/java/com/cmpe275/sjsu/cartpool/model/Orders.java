@@ -1,5 +1,6 @@
 package com.cmpe275.sjsu.cartpool.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,8 +41,16 @@ public class Orders {
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 	
-//	@Column(name = "store_id")
-//	private int storeId;
+	
+	@ManyToOne(cascade = {
+			CascadeType.DETACH,
+			CascadeType.MERGE,
+			CascadeType.PERSIST,
+			CascadeType.REFRESH
+	})
+	@JoinColumn(name = "store_id")
+	@JsonIgnoreProperties({"orders"})
+	private Store store;
 	
 //	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 //	@JoinTable(
@@ -76,8 +85,7 @@ public class Orders {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Orders(int id, OrderStatus status) {
-		this.id = id;
+	public Orders(OrderStatus status) {
 		this.createdDate = new Date();
 		this.status = status;
 	}
@@ -116,16 +124,16 @@ public class Orders {
 //	}
 
 	
-//	public int getStoreId() {
-//		return storeId;
-//	}
-//
-//	public void setStoreId(int storeId) {
-//		this.storeId = storeId;
-//	}
-
 	public User getPicker() {
 		return picker;
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
 	}
 
 	public List<OrderDetails> getOrderDetail() {
@@ -153,5 +161,11 @@ public class Orders {
 		return "Order [id=" + id + ", createdDate=" + createdDate + ", status=" + status + "]";
 	}
 	
+	public void addOrderDetail(OrderDetails orderDetail) {
+		if(this.orderDetail == null) {
+			this.orderDetail = new ArrayList<OrderDetails>();
+		}
+		this.orderDetail.add(orderDetail);
+	}
 	
 }
