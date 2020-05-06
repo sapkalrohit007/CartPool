@@ -12,6 +12,9 @@ spring:
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+                event:
+                    merge:
+                        entity_copy_observer: allow
     mail:
         host: smtp.gmail.com
         port: 587

@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
@@ -48,6 +49,7 @@ public class Pool {
 	
 	@OneToMany( mappedBy = "pool",cascade = { CascadeType.ALL})
 	@JsonIgnoreProperties({"pool"})
+	@JsonIgnore
 	private List<ReferenceConfirmation> referenceConfirmation;
 	
 	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)

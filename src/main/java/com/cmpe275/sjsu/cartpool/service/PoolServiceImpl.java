@@ -1,5 +1,6 @@
 package com.cmpe275.sjsu.cartpool.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -215,6 +216,30 @@ public class PoolServiceImpl implements PoolService{
 			}
 		}
 		throw new BadRequestException("failed to leave group!!!!");
+	}
+
+	@Override
+	public List<Pool> getPool(String poolName,String neighborhoodName, String zip)
+	{
+		if(poolName != null) {
+			List<Pool> pools = new ArrayList<>();
+			pools.add(poolRepository.readPoolByName(poolName));
+			return pools;
+		}
+		if(neighborhoodName != null)
+		{
+			return poolRepository.readPoolsByNeighbourhoodContains(neighborhoodName);
+		}
+		if(zip != null)
+		{
+			return poolRepository.readPoolsByZipcode(zip);
+		}
+		throw new BadRequestException("Missing or Invalid parameters");
+	}
+
+	@Override
+	public List<Pool> getAllPool() {
+		return poolRepository.findAll();
 	}
 		 
 }
