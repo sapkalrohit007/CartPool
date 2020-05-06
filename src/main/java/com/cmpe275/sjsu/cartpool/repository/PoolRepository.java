@@ -13,5 +13,8 @@ public interface PoolRepository extends JpaRepository<Pool, String>{
 	
 	@Query("SELECT p FROM Pool p WHERE p.name = ?1")
 	Pool finByName(String name);
-	
+
+	Pool readPoolByName(String name);
+	List<Pool> readPoolsByNeighbourhoodContains(String neighborhood);
+	List<Pool> readPoolsByZipcode(String zip);
 }
