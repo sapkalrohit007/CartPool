@@ -55,23 +55,18 @@ public class ProductServiceImpl implements ProductService{
        	
     	Unit unit = Unit.valueOf(unitType);
     	
-    	List<Store> stores = new ArrayList<Store>();
-    	
     	List<Integer> storeIds = productRequest.getStores();
+    	
+    	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
     	
     	for(Integer storeId : storeIds) {
     		
     		Optional<Store> theStore = storeRepository.findById(storeId);
     		
     		if(theStore.isPresent()) {
-    			stores.add(theStore.get());
+    			theProduct.addStore(theStore.get(), true);
     		}
-    		
     	}
-    	
-    	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
-    	
-    	theProduct.setStores(stores);
     	
     	try {
     		return productRepository.save(theProduct);

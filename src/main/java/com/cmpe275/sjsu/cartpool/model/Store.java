@@ -37,7 +37,7 @@ public class Store {
 	@Embedded
 	private Address address;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH,CascadeType.MERGE})
 	@JoinTable(
 			name = "product_store", 
 			joinColumns = @JoinColumn( name="store_id"),
@@ -86,27 +86,41 @@ public class Store {
 	
 	public void addProduct(Product theProduct, boolean addInOtherRelationship) {
 		
+//		System.out.println("--------addProduct------------");
+		
 		if(this.product == null) {
 			this.product = new ArrayList<Product>();
 		}
 		
-		boolean flag = false;
-		int theProductSKU = theProduct.getSku();
+//		boolean flag = false;
+//		int theProductSKU = theProduct.getSku();
+//		
+//		for(Product tempProduct:this.product) {
+//			if(tempProduct.getSku() == theProductSKU) {
+//				flag = true;
+//				break;
+//			}
+//		}
+//		
+//		if(!flag) {
+//			this.product.add(theProduct);			
+//		}
+//		
+//		if(addInOtherRelationship) {
+//			theProduct.addStore(this, false);
+//		}
 		
-		for(Product tempProduct:this.product) {
-			if(tempProduct.getSku() == theProductSKU) {
-				flag = true;
-				break;
-			}
+		if(!this.product.contains(theProduct)) {
+			this.product.add(theProduct);
 		}
 		
-		if(!flag) {
-			this.product.add(theProduct);			
+		List<Store> stores = theProduct.getStores();
+		
+		if(!stores.contains(this)) {
+			stores.add(this);
 		}
 		
-		if(addInOtherRelationship) {
-			theProduct.addStore(this, false);
-		}
+		theProduct.setStores(stores);
 		
 	}
 	

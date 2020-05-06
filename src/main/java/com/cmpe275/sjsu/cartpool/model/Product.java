@@ -161,6 +161,8 @@ public class Product{
 	
 	public void addStore(Store theStore, boolean addInOtherRelationship) {
 		
+		System.out.println("--------addStore------------");
+		
 		if(this.stores == null) {
 			this.stores = new ArrayList<Store>();
 		}

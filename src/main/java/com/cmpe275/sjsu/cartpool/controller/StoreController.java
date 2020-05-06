@@ -39,6 +39,8 @@ public class StoreController {
 		
 		Store theStore = storeService.getStore(storeId);
 		
+		System.out.println(theStore.getProduct());
+		
 		return theStore;
 	}
 	
