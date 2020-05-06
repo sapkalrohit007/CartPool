@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,15 +40,22 @@ public class Orders {
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 	
+//	@Column(name = "store_id")
+//	private int storeId;
 	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinTable(
-			name = "order_product", 
-			joinColumns = @JoinColumn(name="order_id"),
-			inverseJoinColumns = @JoinColumn( name="product_id")
-			)	
-	@JsonIgnoreProperties({"orders"})
-	List<Product>products;
+//	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+//	@JoinTable(
+//			name = "order_product", 
+//			joinColumns = @JoinColumn(name="order_id"),
+//			inverseJoinColumns = @JoinColumn( name="product_id")
+//			)	
+//	@JsonIgnoreProperties({"orders"})
+//	List<Product>products;
+	
+	
+	@OneToMany(mappedBy = "order")
+	@JsonIgnoreProperties({"order"})
+	List<OrderDetails>orderDetail;
 	
 	
 	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
@@ -99,16 +107,33 @@ public class Orders {
 	}
 
 	
-	public List<Product> getProducts() {
-		return products;
-	}
+//	public List<Product> getProducts() {
+//		return products;
+//	}
+//
+//	public void setProducts(List<Product> products) {
+//		this.products = products;
+//	}
 
-	public void setProducts(List<Product> products) {
-		this.products = products;
-	}
+	
+//	public int getStoreId() {
+//		return storeId;
+//	}
+//
+//	public void setStoreId(int storeId) {
+//		this.storeId = storeId;
+//	}
 
 	public User getPicker() {
 		return picker;
+	}
+
+	public List<OrderDetails> getOrderDetail() {
+		return orderDetail;
+	}
+
+	public void setOrderDetail(List<OrderDetails> orderDetail) {
+		this.orderDetail = orderDetail;
 	}
 
 	public void setPicker(User picker) {

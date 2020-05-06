@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -53,14 +54,17 @@ public class Product{
 	@JsonIgnoreProperties({"product"})
 	List<Store>stores;
 	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinTable(
-			name = "order_product", 
-			joinColumns = @JoinColumn(name="product_id"),
-			inverseJoinColumns = @JoinColumn( name="order_id")
-			)
-	@JsonIgnoreProperties({"products"})
-	List<Orders>orders;
+//	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+//	@JoinTable(
+//			name = "order_product", 
+//			joinColumns = @JoinColumn(name="product_id"),
+//			inverseJoinColumns = @JoinColumn( name="order_id")
+//			)
+//	@JsonIgnoreProperties({"products"})
+//	List<Orders>orders;
+	@OneToMany(mappedBy = "product")
+	@JsonIgnoreProperties({"product"})
+	List<OrderDetails>orderDetail;
 	
 	public Product() {
 		// TODO Auto-generated constructor stub
@@ -144,13 +148,14 @@ public class Product{
 	
 	
 
-	public List<Orders> getOrders() {
-		return orders;
-	}
-
-	public void setOrders(List<Orders> orders) {
-		this.orders = orders;
-	}
+//	public List<Orders> getOrders() {
+//		return orders;
+//	}
+//
+//	public void setOrders(List<Orders> orders) {
+//		this.orders = orders;
+//	}
+	
 
 	@Override
 	public String toString() {
@@ -159,6 +164,14 @@ public class Product{
 	}
 	
 	
+	public List<OrderDetails> getOrderDetail() {
+		return orderDetail;
+	}
+
+	public void setOrderDetail(List<OrderDetails> orderDetail) {
+		this.orderDetail = orderDetail;
+	}
+
 	public void addStore(Store theStore, boolean addInOtherRelationship) {
 		
 		if(this.stores == null) {
