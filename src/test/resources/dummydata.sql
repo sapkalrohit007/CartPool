@@ -11,7 +11,7 @@ INSERT INTO cartpool.product_store values(2,1);
 
 /* Add order  */
 /* Needs to update userid(which is the first field) as per current users  */
-INSERT INTO cartpool.orders values(1,cast('3-May-2020' AS datetime), "PENDING", 1, NULL, 1)
+INSERT INTO cartpool.orders values(1,NOW(), "PENDING", 1, NULL, 1);
 
 /* Add order product mappings */
 INSERT INTO cartpool.orderdetails values(1,5,1,1);
