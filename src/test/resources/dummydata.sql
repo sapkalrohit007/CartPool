@@ -6,13 +6,13 @@ INSERT INTO cartpool.product values (1,"Cadbury","Cookies","abc","Oreo","10","PI
 INSERT INTO cartpool.product values (2,"Pepsico","Chips","abc","Lays","5","PIECE");
 
 /* Add product store mapping */
-INSERT INTO cartpool.product_store values(1,1);
-INSERT INTO cartpool.product_store values(1,2);
+INSERT INTO cartpool.product_store (store_id,product_id) values(1,1);
+INSERT INTO cartpool.product_store (store_id,product_id) values(1,2);
 
 /* Add order  */
 /* Needs to update userid(which is the first field) as per current users  */
 INSERT INTO cartpool.orders values(1,NOW(), "PENDING", 1, NULL, 1);
 
 /* Add order product mappings */
-INSERT INTO cartpool.order_details values(1,5,1,1);
-INSERT INTO cartpool.order_details values(1,6,1,2);
+INSERT INTO cartpool.order_details (quantity,order_id,product_id) values(5,1,1);
+INSERT INTO cartpool.order_details (quantity,order_id,product_id) values(6,1,2);
