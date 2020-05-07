@@ -1,7 +1,11 @@
 package com.cmpe275.sjsu.cartpool.service;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.cmpe275.sjsu.cartpool.model.*;
+import com.cmpe275.sjsu.cartpool.repository.PoolRepository;
+import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,11 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.cmpe275.sjsu.cartpool.error.AlreadyExistsException;
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
-import com.cmpe275.sjsu.cartpool.model.Address;
-import com.cmpe275.sjsu.cartpool.model.AuthProvider;
-import com.cmpe275.sjsu.cartpool.model.ConfirmationToken;
-import com.cmpe275.sjsu.cartpool.model.Role;
-import com.cmpe275.sjsu.cartpool.model.User;
 import com.cmpe275.sjsu.cartpool.repository.ConfirmationTokenRepository;
 import com.cmpe275.sjsu.cartpool.repository.UserRepository;
 import com.cmpe275.sjsu.cartpool.requestpojo.RegisterUserRequest;
@@ -32,6 +31,9 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PoolRepository poolRepository;
 	
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
@@ -116,7 +118,18 @@ public class UserServiceImpl implements UserService{
         }
         return "invalid URL";
 	}
-	
-	
-	
+
+	@Override
+	public boolean checkIfPoolLeader(UserPrincipal user) {
+		Long id = user.getId();
+		List<Pool> poolList = poolRepository.finByOwner(id);
+		if(!poolList.isEmpty())
+		{
+			return true;
+		}
+		return false;
+
+	}
+
+
 }

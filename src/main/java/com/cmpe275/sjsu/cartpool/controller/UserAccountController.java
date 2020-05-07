@@ -1,13 +1,12 @@
 package com.cmpe275.sjsu.cartpool.controller;
 
 
+import com.cmpe275.sjsu.cartpool.responsepojo.BooleanResponse;
+import com.cmpe275.sjsu.cartpool.security.CurrentUser;
+import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import com.cmpe275.sjsu.cartpool.model.User;
 import com.cmpe275.sjsu.cartpool.requestpojo.RegisterUserRequest;
@@ -32,6 +31,13 @@ public class UserAccountController {
     {
        System.out.println(confirmationToken);
        return userService.confirmUserAccount(confirmationToken);
+    }
+
+    @GetMapping("/isleader")
+    @PreAuthorize("hasRole('POOLER')")
+    public BooleanResponse isPoolLeader(@CurrentUser UserPrincipal currentUser)
+    {
+        return new BooleanResponse(userService.checkIfPoolLeader(currentUser));
     }
     
 }
