@@ -17,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -62,8 +63,10 @@ public class Product{
 //			)
 //	@JsonIgnoreProperties({"products"})
 //	List<Orders>orders;
+
+	//@JsonIgnoreProperties({"product"})
 	@OneToMany(mappedBy = "product")
-	@JsonIgnoreProperties({"product"})
+	@JsonIgnore
 	List<OrderDetails>orderDetail;
 	
 	public Product() {

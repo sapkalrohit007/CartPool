@@ -34,16 +34,16 @@ public class StoreController {
 	private StoreService storeService;
 	
 	@GetMapping("/{storeId}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Store getStore(@PathVariable int storeId) {
 		
 		Store theStore = storeService.getStore(storeId);
-		
+		System.out.println(theStore);
 		return theStore;
 	}
 	
 	@PostMapping
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public Store createStore(@RequestBody Store theStore) {
 		
 		Store resultStore = storeService.createStore(theStore);
@@ -52,7 +52,7 @@ public class StoreController {
 	}
 	
 	@PutMapping
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public Store updateStore(@RequestBody Store theStore) {
 		
 		Store resultStore = storeService.updateStore(theStore);
@@ -62,7 +62,7 @@ public class StoreController {
 	
 	
 	@DeleteMapping("/{storeId}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public Store deleteStore(@PathVariable int storeId) {
 		
 		return storeService.deleteStore(storeId);

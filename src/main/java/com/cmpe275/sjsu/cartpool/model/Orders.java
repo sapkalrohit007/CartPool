@@ -65,10 +65,16 @@ public class Orders {
 	@OneToMany(mappedBy = "order")
 	@JsonIgnoreProperties({"order"})
 	List<OrderDetails>orderDetail;
-	
-	
-	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+
+
+	@ManyToOne(cascade = {
+			CascadeType.DETACH,
+			CascadeType.MERGE,
+			CascadeType.PERSIST,
+			CascadeType.REFRESH
+	})
     @JoinColumn(name = "picked_by")
+	@JsonIgnoreProperties({"pickupOrders"})
 	private User picker;
 	
 	@ManyToOne(cascade = {

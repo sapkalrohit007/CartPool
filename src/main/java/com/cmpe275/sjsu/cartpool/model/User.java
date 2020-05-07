@@ -73,6 +73,10 @@ public class User {
     @JsonIgnoreProperties({"owner"})
     private List<Orders>orders;
 
+    @OneToMany( mappedBy = "picker")
+    @JsonIgnoreProperties({"picker"})
+    private List<Orders>pickupOrders;
+
     @ManyToOne(cascade = {
 			CascadeType.DETACH,
 			CascadeType.MERGE,

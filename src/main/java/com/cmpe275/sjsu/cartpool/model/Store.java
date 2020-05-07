@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -49,9 +50,10 @@ public class Store {
 	public Store() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
+	//@JsonIgnoreProperties({"store"})
 	@OneToMany(mappedBy = "store")
-	@JsonIgnoreProperties({"store"})
+	@JsonIgnore
 	List<Orders>orders;
 	
 	public Store(int id, String name, Address address) {
