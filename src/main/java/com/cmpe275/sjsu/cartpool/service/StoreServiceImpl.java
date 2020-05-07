@@ -3,6 +3,7 @@ package com.cmpe275.sjsu.cartpool.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.criteria.Order;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.transaction.TransactionSystemException;
 import com.cmpe275.sjsu.cartpool.error.AlreadyExistsException;
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
 import com.cmpe275.sjsu.cartpool.error.NotFoundException;
+import com.cmpe275.sjsu.cartpool.model.Orders;
 import com.cmpe275.sjsu.cartpool.model.Product;
 import com.cmpe275.sjsu.cartpool.model.Store;
 import com.cmpe275.sjsu.cartpool.repository.StoreRepository;
@@ -120,6 +122,12 @@ public class StoreServiceImpl implements StoreService{
 		}else {
 			try {
 				Store theStore = existingStore.get();
+				
+				List<Orders> orders = theStore.getOrders();
+				
+				if(!orders.isEmpty()) {
+					throw new BadRequestException("Store cannot be deleted as it has unfullfilled orders");
+				}
 				
 				List<Product> products = theStore.getProduct();
 				

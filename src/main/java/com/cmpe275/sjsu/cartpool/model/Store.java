@@ -185,4 +185,16 @@ public class Store {
 		this.orders.add(order);
 	}
 	
+	public void removeOrder(Orders order) {
+		
+		if(this.orders == null) {
+			this.orders = new ArrayList<Orders>();
+		}
+		
+		if(this.orders.contains(order)) {
+			this.orders.remove(order);
+		}
+		
+	}
+	
 }
