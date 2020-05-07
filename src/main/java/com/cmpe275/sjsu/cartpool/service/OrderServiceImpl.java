@@ -1,23 +1,15 @@
 package com.cmpe275.sjsu.cartpool.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.cmpe275.sjsu.cartpool.model.*;
+import com.cmpe275.sjsu.cartpool.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
-import com.cmpe275.sjsu.cartpool.model.OrderDetails;
-import com.cmpe275.sjsu.cartpool.model.OrderStatus;
-import com.cmpe275.sjsu.cartpool.model.Orders;
-import com.cmpe275.sjsu.cartpool.model.Product;
-import com.cmpe275.sjsu.cartpool.model.Store;
-import com.cmpe275.sjsu.cartpool.model.User;
-import com.cmpe275.sjsu.cartpool.repository.OrderDetailsRepository;
-import com.cmpe275.sjsu.cartpool.repository.OrderRepository;
-import com.cmpe275.sjsu.cartpool.repository.ProductRepository;
-import com.cmpe275.sjsu.cartpool.repository.StoreRepository;
-import com.cmpe275.sjsu.cartpool.repository.UserRepository;
 import com.cmpe275.sjsu.cartpool.requestpojo.ProductOrder;
 import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 
@@ -37,6 +29,9 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Autowired
 	private OrderDetailsRepository orderDetailsRepository;
+
+	@Autowired
+	private PoolRepository poolRepository;
 	
 	@Override
 	public Orders placeOrder(int storeId, List<ProductOrder> products, UserPrincipal currentUser) {
@@ -95,6 +90,34 @@ public class OrderServiceImpl implements OrderService {
 			throw new BadRequestException("Invalid Order Id");
 		}
 		throw new BadRequestException("Orderstatus is null");
+	}
+
+	@Override
+	public List<Orders> getOrders(Integer orderId, String poolName) {
+		if(orderId != null)
+		{
+			Optional<Orders> isOrder = orderRepository.findById(orderId);
+			if(isOrder.isPresent())
+			{
+				List<Orders> orders = new ArrayList<>();
+				orders.add(isOrder.get());
+				return orders;
+			}
+			throw new BadRequestException("Invalid Order Id");
+		}
+		else if(poolName != null){
+			Pool pool = poolRepository.finByName(poolName);
+			if (pool != null){
+				List<Orders> orders = new ArrayList<>();
+				List<User> members = pool.getMembers();
+				for(User member:members){
+					orders.addAll(member.getOrders());
+				}
+				return orders;
+			}
+			throw new BadRequestException("Invalid Pool Name");
+		}
+		throw new BadRequestException("Not parameter specified.");
 	}
 
 	@Override

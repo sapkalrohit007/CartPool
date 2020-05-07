@@ -11,4 +11,5 @@ public interface OrderService {
 	public Orders placeOrder(int storeId,List<ProductOrder>products,UserPrincipal userPrinciple);
 	public Orders updateStatus(Integer orderId, OrderStatus status);
 	public List<Orders> getAllOrders();
+	public List<Orders> getOrders(Integer orderId,String poolName);
 }

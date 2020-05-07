@@ -32,8 +32,15 @@ public class OrderController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping
+	@GetMapping("/all")
 	public List<Orders> getAll(){
 		return orderService.getAllOrders();
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping
+	public List<Orders> getOrders(@RequestParam(name="orderid",required = false) Integer orderId,
+							   @RequestParam(name = "poolname",required = false) String poolName){
+		return orderService.getOrders(orderId,poolName);
 	}
 }
