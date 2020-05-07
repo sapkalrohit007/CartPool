@@ -82,4 +82,24 @@ public class OrderServiceImpl implements OrderService {
 		return orderRepository.findById(order.getId()).get();
 	}
 
+	@Override
+	public Orders updateStatus(Integer orderId,OrderStatus status)
+	{
+		if(status != null) {
+			Optional<Orders> isOrder = orderRepository.findById(orderId);
+			if (isOrder.isPresent()) {
+				isOrder.get().setStatus(status);
+				Orders order = orderRepository.save(isOrder.get());
+				return order;
+			}
+			throw new BadRequestException("Invalid Order Id");
+		}
+		throw new BadRequestException("Orderstatus is null");
+	}
+
+	@Override
+	public List<Orders> getAllOrders() {
+		List<Orders> orders = orderRepository.findAll();
+		return orders;
+	}
 }
