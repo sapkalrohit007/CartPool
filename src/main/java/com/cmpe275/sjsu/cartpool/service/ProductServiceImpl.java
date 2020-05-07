@@ -109,18 +109,25 @@ public class ProductServiceImpl implements ProductService{
 	        	String imageUrl = productRequest.getImageUrl();
 	        	String brand = productRequest.getBrand();
 	        	Double price = productRequest.getPrice();
-	           	
 	        	Unit unit = Unit.valueOf(unitType);
 	        	
 	        	Product existingProduct = isProduct.get();
 	        	
 	        	List<Store> stores = updatedStores(existingProduct,productRequest.getStores());
 	        	
-	        	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
-	        	theProduct.setSku(productRequest.getSku());
-	        	theProduct.setStores(stores);
+	        	existingProduct.setName(name);
+	        	existingProduct.setUnit(unit);
+	        	existingProduct.setBrand(brand);
+	        	existingProduct.setDescription(description);
+	        	existingProduct.setImageUrl(imageUrl);
+	        	existingProduct.setPrice(price);
+	        	existingProduct.setStores(stores);
+	        	
+//	        	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
+//	        	theProduct.setSku(productRequest.getSku());
+//	        	theProduct.setStores(stores);
 	
-	        	return productRepository.save(theProduct);
+	        	return productRepository.save(existingProduct);
 	        	
 	        }else
 	            throw new NotFoundException("Product Not Found");
