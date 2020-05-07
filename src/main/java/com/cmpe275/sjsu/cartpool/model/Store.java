@@ -32,6 +32,7 @@ public class Store {
 	
 	@Column(nullable = false, unique = true)
 	@Size(min=1)
+	@NotNull
 	private String name;
 	
 	@NotNull
@@ -39,12 +40,13 @@ public class Store {
 	@Embedded
 	private Address address;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinTable(
-			name = "product_store", 
-			joinColumns = @JoinColumn( name="store_id"),
-			inverseJoinColumns = @JoinColumn(name="product_id")
-			)
+//	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH,CascadeType.MERGE})
+//	@JoinTable(
+//			name = "product_store", 
+//			joinColumns = @JoinColumn( name="store_id"),
+//			inverseJoinColumns = @JoinColumn(name="product_id")
+//			)
+	@ManyToMany(mappedBy = "stores")
 	@JsonIgnoreProperties({"stores"})
 	List<Product>product;
 	public Store() {
@@ -92,63 +94,88 @@ public class Store {
 		return "Store [id=" + id + ", name=" + name + ", address=" + address + "]";
 	}
 	
-	public void addProduct(Product theProduct, boolean addInOtherRelationship) {
+	public void addProduct(Product theProduct) {
 		
 		if(this.product == null) {
 			this.product = new ArrayList<Product>();
 		}
 		
-		boolean flag = false;
-		int theProductSKU = theProduct.getSku();
+//		boolean flag = false;
+//		int theProductSKU = theProduct.getSku();
+//		
+//		for(Product tempProduct:this.product) {
+//			if(tempProduct.getSku() == theProductSKU) {
+//				flag = true;
+//				break;
+//			}
+//		}
+//		
+//		if(!flag) {
+//			this.product.add(theProduct);			
+//		}
+//		
+//		if(addInOtherRelationship) {
+//			theProduct.addStore(this, false);
+//		}
 		
-		for(Product tempProduct:this.product) {
-			if(tempProduct.getSku() == theProductSKU) {
-				flag = true;
-				break;
-			}
+		if(!this.product.contains(theProduct)) {
+			this.product.add(theProduct);
 		}
 		
-		if(!flag) {
-			this.product.add(theProduct);			
+		List<Store> stores = theProduct.getStores();
+		
+		if(!stores.contains(this)) {
+			stores.add(this);
 		}
 		
-		if(addInOtherRelationship) {
-			theProduct.addStore(this, false);
-		}
+		theProduct.setStores(stores);
 		
 	}
 	
-	
+
 	public List<Orders> getOrders() {
 		return orders;
 	}
 	public void setOrders(List<Orders> orders) {
 		this.orders = orders;
 	}
-	public void removeProduct(Product theProduct, boolean removeFromOtherRelationship) {
+
+	public void removeProduct(Product theProduct) {
 		
 		if(this.product == null) {
 			this.product = new ArrayList<Product>();
 		}
 		
-		Product existingProduct = null;
-		int theProductSKU = theProduct.getSku();
+//		Product existingProduct = null;
+//		int theProductSKU = theProduct.getSku();
+//		
+//		for(Product tempProduct:this.product) {
+//			if(tempProduct.getSku() == theProductSKU) {
+//				existingProduct = tempProduct;
+//				break;
+//			}
+//		}
+//		
+//		if(existingProduct!=null) {
+//			this.product.remove(existingProduct);
+//		}
+//		
+//		if(removeFromOtherRelationship) {
+//			existingProduct.removeStore(this, false);
+//		}
 		
-		for(Product tempProduct:this.product) {
-			if(tempProduct.getSku() == theProductSKU) {
-				existingProduct = tempProduct;
-				break;
-			}
+		
+		if(this.product.contains(theProduct)) {
+			this.product.remove(theProduct);
 		}
 		
-		if(existingProduct!=null) {
-			this.product.remove(existingProduct);
-		}
-		
-		if(removeFromOtherRelationship) {
-			existingProduct.removeStore(this, false);
-		}
-		
+//		List<Store> stores = theProduct.getStores();
+//		
+//		if(stores.contains(this)) {
+//			stores.remove(this);
+//		}
+//		
+//		theProduct.setStores(stores);
 	}
 	
 	public void addOrder(Orders order) {

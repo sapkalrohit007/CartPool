@@ -37,48 +37,44 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Product addProduct(ProductRequest productRequest) {
     	
-    	String name = productRequest.getName().trim();
-    	String unitType = productRequest.getUnit().trim();
-    	
-    	if(name == null || (name != null && name == "")) {
-    		throw new BadRequestException("Invalid name parameter");
-    	}
-    	
-    	if(unitType == null || (unitType != null && unitType == "")) {
-    		throw new BadRequestException("Invalid unit parameter");
-    	}
-    	
-    	String description = productRequest.getDescription();
-    	String imageUrl = productRequest.getImageUrl();
-    	String brand = productRequest.getBrand();
-    	Double price = productRequest.getPrice();
-       	
-    	Unit unit = Unit.valueOf(unitType);
-    	
-    	List<Store> stores = new ArrayList<Store>();
-    	
-    	List<Integer> storeIds = productRequest.getStores();
-
-    	if (storeIds != null && !storeIds.isEmpty()) {
-			for (Integer storeId : storeIds) {
-
-				Optional<Store> theStore = storeRepository.findById(storeId);
-
-				if (theStore.isPresent()) {
-					stores.add(theStore.get());
-				}
-
-			}
-		}
-    	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
-    	
-    	theProduct.setStores(stores);
-    	
     	try {
+	    	String name = productRequest.getName().trim();
+	    	String unitType = productRequest.getUnit().trim();
+	    	
+	    	if(name == null || (name != null && name == "")) {
+	    		throw new BadRequestException("Invalid name parameter");
+	    	}
+	    	
+	    	if(unitType == null || (unitType != null && unitType == "")) {
+	    		throw new BadRequestException("Invalid unit parameter");
+	    	}
+	    	
+	    	String description = productRequest.getDescription();
+	    	String imageUrl = productRequest.getImageUrl();
+	    	String brand = productRequest.getBrand();
+	    	Double price = productRequest.getPrice();
+	       	
+	    	Unit unit = Unit.valueOf(unitType);
+	    	
+	    	List<Integer> storeIds = productRequest.getStores();
+	    	
+	    	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
+	    	
+	    	for(Integer storeId : storeIds) {
+	    		
+	    		Optional<Store> theStore = storeRepository.findById(storeId);
+	    		
+	    		if(theStore.isPresent()) {
+	    			theProduct.addStore(theStore.get());
+	    		}
+	    	}
+	
     		return productRepository.save(theProduct);
     	}catch(BadRequestException e) {
     		throw new BadRequestException("Invalid input parameters");
-    	}
+    	}catch(NullPointerException e) {
+			throw new BadRequestException("Invalid request - bad input parameters");
+		}
         
     }
 
@@ -94,62 +90,67 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product updateProduct(ProductRequest productRequest) {
-        Optional<Product> isProduct = productRepository.findById(productRequest.getSku());
-        if(isProduct.isPresent()) {
-        	
-        	String name = productRequest.getName().trim();
-        	String unitType = productRequest.getUnit().trim();
-        	
-        	if(name == null || (name != null && name == "")) {
-        		throw new BadRequestException("Invalid name parameter");
-        	}
-        	
-        	if(unitType == null || (unitType != null && unitType == "")) {
-        		throw new BadRequestException("Invalid unit parameter");
-        	}
-        	
-        	String description = productRequest.getDescription();
-        	String imageUrl = productRequest.getImageUrl();
-        	String brand = productRequest.getBrand();
-        	Double price = productRequest.getPrice();
-           	
-        	Unit unit = Unit.valueOf(unitType);
-        	
-        	Product existingProduct = isProduct.get();
-        	
-        	List<Store> stores = updatedStores(existingProduct,productRequest.getStores());
-        	
-        	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
-        	theProduct.setSku(productRequest.getSku());
-        	theProduct.setStores(stores);
-        	
-        	try {
-        		return productRepository.save(theProduct);
-        	}catch(BadRequestException e) {
-        		throw new BadRequestException("Invalid input parameters");
-        	}
-        	
-        }else
-            throw new NotFoundException("Product Not Found");
+    	try {
+	        Optional<Product> isProduct = productRepository.findById(productRequest.getSku());
+	        if(isProduct.isPresent()) {
+	        	
+	        	String name = productRequest.getName().trim();
+	        	String unitType = productRequest.getUnit().trim();
+	        	
+	        	if(name == null || (name != null && name == "")) {
+	        		throw new BadRequestException("Invalid name parameter");
+	        	}
+	        	
+	        	if(unitType == null || (unitType != null && unitType == "")) {
+	        		throw new BadRequestException("Invalid unit parameter");
+	        	}
+	        	
+	        	String description = productRequest.getDescription();
+	        	String imageUrl = productRequest.getImageUrl();
+	        	String brand = productRequest.getBrand();
+	        	Double price = productRequest.getPrice();
+	           	
+	        	Unit unit = Unit.valueOf(unitType);
+	        	
+	        	Product existingProduct = isProduct.get();
+	        	
+	        	List<Store> stores = updatedStores(existingProduct,productRequest.getStores());
+	        	
+	        	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
+	        	theProduct.setSku(productRequest.getSku());
+	        	theProduct.setStores(stores);
+	
+	        	return productRepository.save(theProduct);
+	        	
+	        }else
+	            throw new NotFoundException("Product Not Found");
+    	}catch(BadRequestException e) {
+    		throw new BadRequestException("Invalid request - bad input parameters");
+    	}catch(NullPointerException e) {
+			throw new BadRequestException("Invalid request - bad input parameters");
+		}
     }
 
     @Override
     public Product deleteProduct(int productId) {
         Optional<Product> isProduct = productRepository.findById(productId);
+        System.out.println(isProduct.get().getStores());
         if (isProduct.isPresent())
         {
-            Product product = isProduct.get();
-            List<OrderDetails> orders = product.getOrderDetail();
+
+            Product existingProduct = isProduct.get();
+            List<OrderDetails> orders = existingProduct.getOrderDetail();
+            
             if(orders.isEmpty())
             {
-            	List<Store> stores = product.getStores();
+            	List<Store> stores = existingProduct.getStores();
             	
             	for(Store theStore : stores) {
-            		theStore.removeProduct(product, false);
+            		theStore.removeProduct(existingProduct);
             	}
             	
                 productRepository.deleteById(productId);
-                return product;
+                return existingProduct;
             }
             else
             {
@@ -191,7 +192,7 @@ public class ProductServiceImpl implements ProductService{
     	}
     	
     	for(Store theStore : removeStoresFromProduct) {
-    		existingProduct.removeStore(theStore, true);
+    		existingProduct.removeStore(theStore);
     	}
     	
     	
@@ -201,7 +202,7 @@ public class ProductServiceImpl implements ProductService{
     			Optional<Store> theStore = storeRepository.findById(storeId);
         		
         		if(theStore.isPresent()) {
-        			existingProduct.addStore(theStore.get(), true);
+        			existingProduct.addStore(theStore.get());
         		}
     		}
     		

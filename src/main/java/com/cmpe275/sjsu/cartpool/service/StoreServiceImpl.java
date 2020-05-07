@@ -26,21 +26,28 @@ public class StoreServiceImpl implements StoreService{
 	@Override
 	public Store createStore(Store theStore){
 		
-		Optional<Store> existingStore = storeRepository.findByName(theStore.getName());
-		
-		if(existingStore.isPresent()) {
-			throw new AlreadyExistsException("Store with same name already in use");
-		}
-		
-		theStore.setId(0);
-		
 		try {
+		
+			Optional<Store> existingStore = storeRepository.findByName(theStore.getName());
+			
+			
+			
+			if(existingStore.isPresent()) {
+				throw new AlreadyExistsException("Store with same name already in use");
+			}
+			
+			theStore.setId(0);
+		
 			Store result = storeRepository.save(theStore);
 			return result;
 		}catch(ConstraintViolationException e) {
 			throw new ConstraintViolationException("Invalid request - bad input parameters", null);
 		}catch(DataIntegrityViolationException e) {
-			throw new DataIntegrityViolationException("Invalid request - bad input parameters");
+			throw new DataIntegrityViolationException("Invalid request - missing input parameters");
+		}catch(TransactionSystemException e) {
+			throw new TransactionSystemException("Invalid request - bad parameters");
+		}catch(NullPointerException e) {
+			throw new BadRequestException("Invalid request - bad input parameters");
 		}catch(Exception e) {
 			throw new RuntimeException(e.fillInStackTrace());
 		}
@@ -50,39 +57,40 @@ public class StoreServiceImpl implements StoreService{
 	@Override
 	public Store updateStore(Store theStore) {
 		
-		System.out.println(theStore.getId());
-		System.out.println(theStore.getName());
-		System.out.println(theStore.getAddress());
+//		System.out.println(theStore.getId());
+//		System.out.println(theStore.getName());
+//		System.out.println(theStore.getAddress());
 		
 		try {			
-			Optional<Store> existingStore = storeRepository.findById(theStore.getId());
+			Optional<Store> existingStoreById = storeRepository.findById(theStore.getId());
 			
-			if(!existingStore.isPresent()) {
+			if(!existingStoreById.isPresent()) {
 				throw new NotFoundException("Store not found");
 			}
 						
-			Optional<Store> exisingStoreWithName = storeRepository.findByName(theStore.getName());
+			Optional<Store> exisingStoreByName = storeRepository.findByName(theStore.getName());
 
 			
-			if(!exisingStoreWithName.isPresent() && exisingStoreWithName.get().getId() != theStore.getId()) {
+			if(exisingStoreByName.isPresent() && exisingStoreByName.get().getId() != theStore.getId()) {
 				throw new BadRequestException("Store with same name already present");
 			}
 			
-			existingStore.get().setAddress(theStore.getAddress());
+			existingStoreById.get().setAddress(theStore.getAddress());
 			
-			existingStore.get().setName(theStore.getName());
+			existingStoreById.get().setName(theStore.getName());
 			
-			Store result = storeRepository.save(existingStore.get());
+			Store result = storeRepository.save(existingStoreById.get());
 			return result;
 			
 		}catch(ConstraintViolationException e) {
-			throw new ConstraintViolationException("Invalid request - bad input parameters", null);
+			throw new BadRequestException("Invalid request - bad input parameters", null);
 		}catch(DataIntegrityViolationException e) {
-			throw new DataIntegrityViolationException("Invalid request - missing input parameters");
+			throw new BadRequestException("Invalid request - missing input parameters");
 		}catch(TransactionSystemException e) {
-			throw new TransactionSystemException("Invalid request - bad parameters");
-		}
-		catch(Exception e) {
+			throw new BadRequestException("Invalid request - bad parameters");
+		}catch(NullPointerException e) {
+			throw new BadRequestException("Invalid request - bad input parameters");
+		}catch(Exception e) {
 			throw new RuntimeException(e.fillInStackTrace());
 		}
 
@@ -116,7 +124,7 @@ public class StoreServiceImpl implements StoreService{
 				List<Product> products = theStore.getProduct();
 				
 				for(Product theProduct : products) {
-					theProduct.removeStore(theStore, false);
+					theProduct.removeStore(theStore);
 				}
 				
 				storeRepository.delete(theStore);

@@ -38,7 +38,7 @@ public class StoreController {
 	public Store getStore(@PathVariable int storeId) {
 		
 		Store theStore = storeService.getStore(storeId);
-		System.out.println(theStore);
+
 		return theStore;
 	}
 	

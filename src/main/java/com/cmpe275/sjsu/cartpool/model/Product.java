@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.validation.constraints.NotNull;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,6 +29,7 @@ public class Product{
 	private int sku;
 	
 	@Column(nullable = false)
+	@NotNull
 	private String name;
 	
 	@Column
@@ -41,6 +43,7 @@ public class Product{
 	
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@NotNull
 	private Unit unit;
 	
 	@Column(nullable = false)
@@ -166,7 +169,7 @@ public class Product{
 				+ ", brand=" + brand + ", unit=" + unit + ", price=" + price + "]";
 	}
 	
-	
+
 	public List<OrderDetails> getOrderDetail() {
 		return orderDetail;
 	}
@@ -175,54 +178,74 @@ public class Product{
 		this.orderDetail = orderDetail;
 	}
 
-	public void addStore(Store theStore, boolean addInOtherRelationship) {
+	public void addStore(Store theStore) {
 		
 		if(this.stores == null) {
 			this.stores = new ArrayList<Store>();
 		}
 		
-		boolean flag = false;
-		int theStoreId = theStore.getId();
+//		boolean flag = false;
+//		int theStoreId = theStore.getId();
+//		
+//		for(Store tempStore:this.stores) {
+//			if(tempStore.getId() == theStoreId) {
+//				flag = true;
+//				break;
+//			}
+//		}
+//		
+//		if(!flag) {
+//			this.stores.add(theStore);			
+//		}
 		
-		for(Store tempStore:this.stores) {
-			if(tempStore.getId() == theStoreId) {
-				flag = true;
-				break;
-			}
+		if(!this.stores.contains(theStore)) {
+			this.stores.add(theStore);
 		}
 		
-		if(!flag) {
-			this.stores.add(theStore);			
+		List<Product> products = theStore.getProduct();
+		
+		if(!products.contains(this)) {
+			products.add(this);
 		}
 		
-		if(addInOtherRelationship) {
-			theStore.addProduct(this, false);
-		}
+		theStore.setProduct(products);
 	}
 	
-	public void removeStore(Store theStore, boolean removeFromOtherRelationship) {
+	public void removeStore(Store theStore) {
 		
 		if(this.stores == null) {
 			this.stores = new ArrayList<Store>();
 		}
 		
-		Store existingStore = null;
-		int theStoreId = theStore.getId();
+//		Store existingStore = null;
+//		int theStoreId = theStore.getId();
+//		
+//		for(Store tempStore:this.stores) {
+//			if(tempStore.getId() == theStoreId) {
+//				existingStore = tempStore;
+//				break;
+//			}
+//		}
+//		
+//		if(existingStore!=null) {
+//			this.stores.remove(existingStore);
+//		}
 		
-		for(Store tempStore:this.stores) {
-			if(tempStore.getId() == theStoreId) {
-				existingStore = tempStore;
-				break;
-			}
-		}
+//		if(removeFromOtherRelationship) {
+//			existingStore.addProduct(this, false);
+//		}
 		
-		if(existingStore!=null) {
-			this.stores.remove(existingStore);
+		if(this.stores.contains(theStore)) {
+			this.stores.remove(theStore);
 		}
-		
-		if(removeFromOtherRelationship) {
-			existingStore.addProduct(this, false);
-		}
+//		
+//		List<Product> products = theStore.getProduct();
+//		
+//		if(products.contains(this)) {
+//			products.remove(this);
+//		}
+//		
+//		theStore.setProduct(products);
 		
 	} 
 	public void addOrderDetail(OrderDetails orderDetail) {
