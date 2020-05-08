@@ -84,7 +84,7 @@ public class User {
 			CascadeType.REFRESH
 	})
 	@JoinColumn(name = "pool_id")
-    @JsonIgnoreProperties({"users"})
+    @JsonIgnoreProperties({"members"})
     private Pool pool;
     
     public Long getId() {
