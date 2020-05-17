@@ -65,6 +65,10 @@ public class OrderServiceImpl implements OrderService {
 		
 		Optional<User> owner = userRepository.findByEmail(currentUser.getEmail());
 		
+		if(owner.get().getPool()==null) {
+			throw new BadRequestException("Please join some pool to place the order...Without pool you are not allowed to place order...Thanks");
+		}
+		
 		if(!store.isPresent()) {
 			throw new BadRequestException("Store with given Id is not present");
 		}
