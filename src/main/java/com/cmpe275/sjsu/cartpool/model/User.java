@@ -190,5 +190,12 @@ public class User {
 		this.orders.add(order);
 	}
 	
+	public void addPickUpOrder(Orders order) {
+		if(this.pickupOrders == null) {
+			this.pickupOrders = new ArrayList<Orders>();
+		}
+		this.pickupOrders.add(order);
+	}
+	
     
 }

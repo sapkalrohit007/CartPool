@@ -189,10 +189,16 @@ public class OrderServiceImpl implements OrderService {
 				
 				theOrder.get().setStatus(OrderStatus.PICKED);
 				theOrder.get().setPicker(theUser);
-				
-				orderRepository.save(theOrder.get());
 			}
 			
+			theUser.addPickUpOrder(theOrder.get());
+			
+		}
+		
+		try {
+			userRepository.save(theUser);
+		}catch(Exception e) {
+			throw new RuntimeException(e.fillInStackTrace());
 		}
 		
 		CommonMessage result = new CommonMessage(
