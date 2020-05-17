@@ -2,7 +2,7 @@ spring:
     datasource:
         url: jdbc:mysql://localhost:3306/cartpool?serverTimezone=UTC&useLegacyDatetimeCode=false
         username: root
-        password: admin
+        password: password
 
     jpa:
         show-sql: true
@@ -36,7 +36,9 @@ app:
     tokenExpirationMsec: 864000000
 
     
-    
+email:
+    url: http://localhost:8080
+      
 #spring.mail.host = smtp.gmail.com
 #spring.mail.port = 587
 #spring.mail.username = example@gmail.com

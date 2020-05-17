@@ -87,7 +87,18 @@ public class User {
     @JsonIgnoreProperties({"members"})
     private Pool pool;
     
-    public Long getId() {
+    @Column(name = "credit")
+    private int credit;
+
+	public int getCredit() {
+		return credit;
+	}
+
+	public void setCredit(int credit) {
+		this.credit = credit;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -188,6 +199,13 @@ public class User {
 			this.orders=new ArrayList<Orders>();
 		}
 		this.orders.add(order);
+	}
+	
+	public void addPickUpOrder(Orders order) {
+		if(this.pickupOrders == null) {
+			this.pickupOrders = new ArrayList<Orders>();
+		}
+		this.pickupOrders.add(order);
 	}
 	
     

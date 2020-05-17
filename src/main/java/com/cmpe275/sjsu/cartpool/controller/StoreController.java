@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cmpe275.sjsu.cartpool.error.BadRequestException;
 import com.cmpe275.sjsu.cartpool.error.NotFoundException;
 import com.cmpe275.sjsu.cartpool.model.Product;
 import com.cmpe275.sjsu.cartpool.model.Store;
@@ -87,6 +88,9 @@ public class StoreController {
 		
 		List<Store> result =  storeService.searchStore(name);
 		
+		if(result.size()==0 || result.size()>1) {
+			throw new BadRequestException("There are no stores with the name you have provided..");
+		}
 		return result;
 		
 	}

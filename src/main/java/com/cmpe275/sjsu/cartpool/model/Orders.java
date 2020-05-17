@@ -70,7 +70,7 @@ public class Orders {
 			CascadeType.REFRESH
 	})
     @JoinColumn(name = "picked_by")
-	@JsonIgnoreProperties({"pickupOrders"})
+	@JsonIgnoreProperties({"pickupOrders","orders"})
 	private User picker;
 	
 	@ManyToOne(cascade = {
