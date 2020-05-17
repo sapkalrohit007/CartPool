@@ -87,7 +87,18 @@ public class User {
     @JsonIgnoreProperties({"members"})
     private Pool pool;
     
-    public Long getId() {
+    @Column(name = "credit")
+    private int credit;
+
+	public int getCredit() {
+		return credit;
+	}
+
+	public void setCredit(int credit) {
+		this.credit = credit;
+	}
+
+	public Long getId() {
         return id;
     }
 
