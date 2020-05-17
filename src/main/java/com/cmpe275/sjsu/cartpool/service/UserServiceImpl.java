@@ -68,6 +68,7 @@ public class UserServiceImpl implements UserService{
         	address.setStreet(registerUserRequest.getStreet());
         	address.setZip(registerUserRequest.getZip());
         	user.setAddress(address);
+        	user.setCredit(0);
         	String encryptedPassword = bcryptPasswordEncoder.encode(registerUserRequest.getPassword());
         	user.setPassword(encryptedPassword);
         	String email = registerUserRequest.getEmail();

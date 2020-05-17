@@ -7,7 +7,6 @@ import com.cmpe275.sjsu.cartpool.model.Orders;
 import com.cmpe275.sjsu.cartpool.requestpojo.OrderIDRequest;
 import com.cmpe275.sjsu.cartpool.requestpojo.ProductOrder;
 import com.cmpe275.sjsu.cartpool.responsepojo.CommonMessage;
-import com.cmpe275.sjsu.cartpool.security.CurrentUser;
 import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 
 public interface OrderService {
@@ -22,4 +21,7 @@ public interface OrderService {
 	public List<Orders> getOrdersToBePickedByUser(UserPrincipal currentUser);
 	public List<Orders> getUserDeliveryOrders(UserPrincipal currentUser);
 	public List<Orders> getOrdersToBeDeliverByUser(UserPrincipal currentUser);
+	public CommonMessage deliver(int orderId);
+	public String confirmOrderReceived(String token);
+	public String rejectOrderReceived(String confirmationToken);
 }

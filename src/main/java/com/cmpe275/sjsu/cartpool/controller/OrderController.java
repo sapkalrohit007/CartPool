@@ -7,9 +7,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -94,7 +96,6 @@ public class OrderController {
 		
 	}
 	
-
 	@PreAuthorize("hasRole('POOLER')")
 	@GetMapping("/user/of/deliver")
 	public List<Orders> getUserDeliveryOrders(@CurrentUser UserPrincipal currentUser){
@@ -108,6 +109,21 @@ public class OrderController {
 		
 		return orderService.getOrdersToBeDeliverByUser(currentUser);
 	}
+
+	@PreAuthorize("hasRole('POOLER')")
+	@GetMapping("/deliver/{orderId}")
+	public CommonMessage deliver(@PathVariable int orderId) {
+		return orderService.deliver(orderId);
+	}
 	
+	@RequestMapping(value="/confirm-order-received", method= {RequestMethod.GET, RequestMethod.POST})
+	public String confirmOrderReceiver(@RequestParam("token")String confirmationToken) {
+		return orderService.confirmOrderReceived(confirmationToken);
+	}
+	
+	@RequestMapping(value="/reject-order-received", method= {RequestMethod.GET, RequestMethod.POST})
+	public String rejectOrderReceiver(@RequestParam("token")String confirmationToken) {
+		return orderService.rejectOrderReceived(confirmationToken);
+	}
 	
 }
