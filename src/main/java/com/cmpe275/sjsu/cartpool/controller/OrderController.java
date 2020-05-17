@@ -61,7 +61,7 @@ public class OrderController {
 	}
 	
 	@PreAuthorize("hasRole('POOLER')")
-	@PostMapping("/pick_by")
+	@PostMapping("/user_will_pick_up")
 	public CommonMessage ordersPickedBy(
 			@RequestBody OrderIDRequest orderIDRequest,
 			@CurrentUser UserPrincipal currentUser) {
@@ -71,5 +71,12 @@ public class OrderController {
 	}
 	
 	
+	@PreAuthorize("hasRole('POOLER')")
+	@GetMapping("/pick_up")
+	public List<Orders> ordersToBePickedByUser(@CurrentUser UserPrincipal currentUser){
+		
+		return orderService.ordersToBePickedByUser(currentUser);
+		
+	}
 	
 }

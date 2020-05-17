@@ -202,7 +202,14 @@ public class OrderServiceImpl implements OrderService {
 		
 	}
 
-	
+	@Override
+	public List<Orders> ordersToBePickedByUser(UserPrincipal currentUser) {
+		
+		List<Orders> result = orderRepository.getOrdersToBePickedByUser(OrderStatus.PICKED, currentUser.getId());
+		
+		return result;
+	}
 
+	
 	
 }
