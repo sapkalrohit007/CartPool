@@ -4,13 +4,13 @@ insert into cartpool.users (id,city,state,street,zip,email,email_verified,name,n
 
 /* Add users */
 insert into cartpool.users (id,city,state,street,zip,email,email_verified,name,nick_name,password,provider,role)
- values(2,'San Jose','CA','San Fernando','95132','test@gmail.com',1,'Bob','Bob','password','local','POOLLEADER');
+ values(2,'San Jose','CA','San Fernando','95132','test1@gmail.com',1,'Bob','Bob','password','local','POOLLEADER');
 
 insert into cartpool.users (id,city,state,street,zip,email,email_verified,name,nick_name,password,provider,role)
- values(3,'San Jose','CA','San Fernando','95132','test@gmail.com',1,'Carl','Carl','password','local','POOLER');
+ values(3,'San Jose','CA','San Fernando','95132','test2@gmail.com',1,'Carl','Carl','password','local','POOLER');
 
 insert into cartpool.users (id,city,state,street,zip,email,email_verified,name,nick_name,password,provider,role)
- values(4,'San Jose','CA','San Fernando','95132','test@gmail.com',1,'David','David','password','local','POOLER');
+ values(4,'San Jose','CA','San Fernando','95132','test3@gmail.com',1,'David','David','password','local','POOLER');
 
 /* Add stores */
 INSERT INTO cartpool.STORE (id,city,state,street,zip,name) values(1,"San Jose","CA","1641 N Capitol Ave","95132","Lucky");
@@ -35,10 +35,11 @@ INSERT INTO cartpool.pool (uuid,description,name,neighbourhood,zipcode,owner_id)
 VALUES ('52b87c6e-6a4d-4895-8844-56aaad9463c4','Evergreen pool','Evergreen','San Fernando','95132',2);
 
 /* Update users */
+
+/* Add Bob */
+UPDATE cartpool.users SET pool_id='52b87c6e-6a4d-4895-8844-56aaad9463c4' WHERE id = 2;
 /* Add Carl */
-UPDATE cartpool.pool SET pool_id='52b87c6e-6a4d-4895-8844-56aaad9463c4' WHERE id = 3;
-/* Add David */
-UPDATE cartpool.pool SET pool_id='52b87c6e-6a4d-4895-8844-56aaad9463c4' WHERE id = 4;
+UPDATE cartpool.users SET pool_id='52b87c6e-6a4d-4895-8844-56aaad9463c4' WHERE id = 3;
 
 /* Add Carl's order */
 INSERT INTO cartpool.orders (id,created_date,status,owner,store_id) values(1,NOW(), "PENDING", 3, 1);
