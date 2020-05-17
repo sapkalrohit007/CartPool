@@ -12,4 +12,5 @@ public interface OrderService {
 	public Orders updateStatus(Integer orderId, OrderStatus status);
 	public List<Orders> getAllOrders();
 	public List<Orders> getOrders(Integer orderId,String poolName);
+	public List<Orders> findMyPoolOrders(UserPrincipal currentUser);
 }

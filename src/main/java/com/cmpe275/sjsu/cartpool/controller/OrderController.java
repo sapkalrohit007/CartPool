@@ -31,6 +31,12 @@ public class OrderController {
 		return orderService.updateStatus(request.getId(),request.getOrderStatus());
 	}
 
+	@GetMapping("/pool")
+	public List<Orders> getPoolOrders(@CurrentUser UserPrincipal currentUser)
+	{
+		return orderService.findMyPoolOrders(currentUser);
+	}
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/all")
 	public List<Orders> getAll(){

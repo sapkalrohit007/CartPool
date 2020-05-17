@@ -93,6 +93,27 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	public List<Orders> findMyPoolOrders(UserPrincipal currentUser) {
+		Optional<User> owner = userRepository.findByEmail(currentUser.getEmail());
+		List<Orders> orders = new ArrayList<>();
+		Pool pool = owner.get().getPool();
+		if (pool != null) {
+			List<User> members = pool.getMembers();
+			members.add(pool.getOwner());
+			int i;
+			for(i=0;i<members.size();i++)
+				if(members.get(i).getId() == owner.get().getId())
+					break;
+			members.remove(i);
+			for (User member : members) {
+				orders.addAll(member.getOrders());
+			}
+			return orders;
+		}
+		throw new BadRequestException("No pool associated to the user");
+	}
+
+	@Override
 	public List<Orders> getOrders(Integer orderId, String poolName) {
 		if(orderId != null)
 		{
