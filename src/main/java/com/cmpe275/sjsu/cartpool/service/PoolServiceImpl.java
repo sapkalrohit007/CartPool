@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+
+import com.cmpe275.sjsu.cartpool.config.EmailConfig;
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
 import com.cmpe275.sjsu.cartpool.model.Pool;
 import com.cmpe275.sjsu.cartpool.model.ReferenceConfirmation;
@@ -29,6 +31,9 @@ public class PoolServiceImpl implements PoolService{
 	
 	@Autowired
     private EmailSenderService emailSenderService;
+	
+	@Autowired
+	private EmailConfig emailConfig;
 	
 	@Override
 	public Pool createPool(UserPrincipal currentUser, Pool pool) {
@@ -96,9 +101,9 @@ public class PoolServiceImpl implements PoolService{
 	         mailMessage.setTo(pool.getOwner().getEmail());
 	         mailMessage.setSubject("Approve Pool Join Request for "+user.get().getName()+" in your pool!!  CartPool Website!");
 	         mailMessage.setText("To confirm the request, please click here : "
-	         +"http://localhost:8080/pool/confirm-request-owner?token="+token.getConfirmationToken()+
+	        		 +emailConfig.getUrl()+"/pool/confirm-request-owner?token="+token.getConfirmationToken()+
 	         "\n\nTo reject the request, please click here : "
-	         +"http://localhost:8080/pool/reject-request?token="+token.getConfirmationToken());
+	         +emailConfig.getUrl()+"/pool/reject-request?token="+token.getConfirmationToken());
 
 	         emailSenderService.sendEmail(mailMessage);
 
@@ -110,9 +115,9 @@ public class PoolServiceImpl implements PoolService{
 		         mailMessage.setTo(refree.getEmail());
 		         mailMessage.setSubject("Approve reference request for "+user.get().getName()+" to join pool!!! CartPool Website!");
 		         mailMessage.setText("To confirm the request, please click here : "
-		         +"http://localhost:8080/pool/confirm-request?token="+token.getConfirmationToken()+"\n\n\n"+
+		        		 +emailConfig.getUrl()+"/pool/confirm-request?token="+token.getConfirmationToken()+"\n\n\n"+
 		         	"To reject the request, please click here : "
-		         +"http://localhost:8080/pool/reject-request?token="+token.getConfirmationToken());
+		         	+emailConfig.getUrl()+"/pool/reject-request?token="+token.getConfirmationToken());
 
 		         emailSenderService.sendEmail(mailMessage);
 
@@ -174,9 +179,9 @@ public class PoolServiceImpl implements PoolService{
 		        mailMessage.setTo(token.getPool().getOwner().getEmail());
 		        mailMessage.setSubject("Approve Pool Join Request for "+token.getUser().getName()+" in your pool!!  CartPool Website!");
 		        mailMessage.setText("To confirm the request, please click here : "
-		        +"http://localhost:8080/pool/confirm-request-owner?token="+token.getConfirmationToken()+
+		        		+emailConfig.getUrl()+"/pool/confirm-request-owner?token="+token.getConfirmationToken()+
 		        "\n\nTo reject the request, please click here : "
-		        +"http://localhost:8080/pool/reject-request?token="+token.getConfirmationToken());
+		        +emailConfig.getUrl()+"/pool/reject-request?token="+token.getConfirmationToken());
 
 		         emailSenderService.sendEmail(mailMessage);
 	            

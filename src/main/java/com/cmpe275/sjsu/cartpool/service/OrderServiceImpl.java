@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import com.cmpe275.sjsu.cartpool.config.EmailConfig;
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
 import com.cmpe275.sjsu.cartpool.error.NotFoundException;
-import com.cmpe275.sjsu.cartpool.model.ConfirmationToken;
 import com.cmpe275.sjsu.cartpool.model.OrderDeliveryConfirmationToken;
 import com.cmpe275.sjsu.cartpool.model.OrderDetails;
 import com.cmpe275.sjsu.cartpool.model.OrderStatus;
@@ -54,6 +54,9 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Autowired
     private EmailSenderService emailSenderService;
+	
+	@Autowired
+	private EmailConfig emailConfig;
 	
 	@Autowired
 	private OrderDeliveryConfirmationRepository orderDeliveryConfirmationRepository;

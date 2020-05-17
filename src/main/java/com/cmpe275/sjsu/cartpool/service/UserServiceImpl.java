@@ -11,6 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.cmpe275.sjsu.cartpool.config.EmailConfig;
 import com.cmpe275.sjsu.cartpool.error.AlreadyExistsException;
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
 import com.cmpe275.sjsu.cartpool.repository.ConfirmationTokenRepository;
@@ -34,6 +35,9 @@ public class UserServiceImpl implements UserService{
 
 	@Autowired
 	private PoolRepository poolRepository;
+	
+	@Autowired
+	private EmailConfig emailConfig;
 	
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
@@ -89,8 +93,11 @@ public class UserServiceImpl implements UserService{
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setTo(user.getEmail());
             mailMessage.setSubject("Verify Email for CartPool Website!");
+//            mailMessage.setText("To confirm your account, please click here : "
+//            +"http://localhost:8080/user/confirm-account?token="+confirmationToken.getConfirmationToken());
+            
             mailMessage.setText("To confirm your account, please click here : "
-            +"http://localhost:8080/user/confirm-account?token="+confirmationToken.getConfirmationToken());
+            		+emailConfig.getUrl()+"/user/confirm-account?token="+confirmationToken.getConfirmationToken());
 
             emailSenderService.sendEmail(mailMessage);
             return user;
