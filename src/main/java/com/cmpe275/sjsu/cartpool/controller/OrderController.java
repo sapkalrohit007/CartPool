@@ -35,11 +35,11 @@ public class OrderController {
 		return orderService.placeOrder(request.getStorId(), request.getProducts(), currentUser); 
 	}
 
-	@PatchMapping("/status")
+	/*@PatchMapping("/status")
 	public Orders updateOrderStatus(@RequestBody OrderStatusRequest request)
 	{
 		return orderService.updateStatus(request.getId(),request.getOrderStatus());
-	}
+	}*/
 
 	@GetMapping("/pool")
 	public List<Orders> getPoolOrders(@CurrentUser UserPrincipal currentUser)
@@ -69,7 +69,14 @@ public class OrderController {
 		return orderService.ordersPickedBy(orderIDRequest, currentUser);
 		
 	}
-	
+
+	@PatchMapping("/checkout")
+	public Orders checkoutOrder(@RequestParam(name="orderid",required = true) Integer orderId)
+	{
+		Orders order = orderService.setOrderInDelivery(orderId);
+		orderService.sendCheckoutMailToOwner(orderId);
+		return order;
+	}
 	
 	
 }

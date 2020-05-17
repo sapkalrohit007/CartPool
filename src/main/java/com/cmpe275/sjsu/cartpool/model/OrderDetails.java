@@ -26,7 +26,7 @@ public class OrderDetails {
 	
 	@ManyToOne(fetch = FetchType.LAZY,cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name = "product_id")
-	@JsonIgnoreProperties({"orderDetail"})
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "orderDetail"})
 	private Product product;
 	
 	@Column(name = "quantity")

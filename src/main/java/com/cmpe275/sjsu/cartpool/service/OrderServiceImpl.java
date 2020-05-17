@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
@@ -47,6 +48,9 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private PoolRepository poolRepository;
+
+	@Autowired
+	private EmailSenderService emailSenderService;
 	
 	@Override
 	public Orders placeOrder(int storeId, List<ProductOrder> products, UserPrincipal currentUser) {
@@ -209,7 +213,78 @@ public class OrderServiceImpl implements OrderService {
 		
 	}
 
-	
+	@Override
+	public Orders setOrderInDelivery(Integer orderId) {
+		Optional<Orders> isOrder = orderRepository.findById(orderId);
+		if(isOrder.isPresent())
+		{
+			Orders order = isOrder.get();
+			if(order.getStatus() == OrderStatus.PICKED) {
+				order.setStatus(OrderStatus.INDELIVERY);
+				orderRepository.save(order);
+				return order;
+			}
+			throw new BadRequestException("Cannot checkout unpicked order with id: "+orderId);
+		}
+		throw new BadRequestException("No order found with order id: "+orderId);
+	}
 
-	
+	@Override
+	public void sendCheckoutMailToOwner(Integer orderId)
+	{
+		Optional<Orders> isOrder = orderRepository.findById(orderId);
+		if(isOrder.isPresent())
+		{
+			Orders order = isOrder.get();
+			User owner = order.getOwner();
+			User picker = order.getPicker();
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(owner.getEmail());
+			mailMessage.setSubject("Order "+orderId + " in on your way");
+			StringBuilder builder = new StringBuilder();
+			builder.append("Hello "+ owner.getName() + ",\n\n"
+					+ "Your order with id: "+orderId+" is being delivered to you by " +  picker.getName()
+					+ "\nThe order contains the following items:\n");
+			for(OrderDetails orderDetails : order.getOrderDetail())
+			{
+				builder.append(orderDetails.getProduct().getName() + "\n");
+			}
+			builder.append("\nRegards,\nCartpool");
+			mailMessage.setText(builder.toString());
+
+			emailSenderService.sendEmail(mailMessage);
+			return;
+		}
+		throw new BadRequestException("No order found with order id: "+orderId);
+	}
+
+	/* Not yet complete  */
+	@Override
+	public void sendCheckoutMailToPicker(Integer orderId)
+	{
+		Optional<Orders> isOrder = orderRepository.findById(orderId);
+		if(isOrder.isPresent())
+		{
+			Orders order = isOrder.get();
+			User owner = order.getOwner();
+			User picker = order.getPicker();
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(picker.getEmail());
+			mailMessage.setSubject("Order "+orderId + " details");
+			StringBuilder builder = new StringBuilder();
+			builder.append("Hello "+ picker.getName() + ",\n\n"
+					+ "Following are the details of Order "+orderId+":");
+
+			for(OrderDetails orderDetails : order.getOrderDetail())
+			{
+				builder.append(orderDetails.getProduct().getName() + "\n");
+			}
+			builder.append("\nRegards,\nCartpool");
+			mailMessage.setText(builder.toString());
+
+			emailSenderService.sendEmail(mailMessage);
+			return;
+		}
+		throw new BadRequestException("No order found with order id: "+orderId);
+	}
 }

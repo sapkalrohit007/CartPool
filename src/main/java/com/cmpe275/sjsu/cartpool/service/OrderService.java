@@ -16,4 +16,7 @@ public interface OrderService {
 	public List<Orders> getOrders(Integer orderId,String poolName);
 	public List<Orders> findMyPoolOrders(UserPrincipal currentUser);
 	public CommonMessage ordersPickedBy(OrderIDRequest orderIDRequest,  UserPrincipal currentUser);
+	public Orders setOrderInDelivery(Integer orderId);
+	public void sendCheckoutMailToOwner(Integer orderId);
+	public void sendCheckoutMailToPicker(Integer orderId);
 }
