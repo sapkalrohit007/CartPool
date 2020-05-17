@@ -170,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public CommonMessage ordersPickedBy(OrderIDRequest orderIDRequest, UserPrincipal currentUser) {
+	public CommonMessage markUserToPickTheOrders(OrderIDRequest orderIDRequest, UserPrincipal currentUser) {
 		
 		Optional<User> owner = 
 				userRepository.findByEmail(currentUser.getEmail());
@@ -216,13 +216,45 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<Orders> ordersToBePickedByUser(UserPrincipal currentUser) {
+	public List<Orders> getOrdersToBePickedByUser(UserPrincipal currentUser) {
 		
-		List<Orders> result = orderRepository.getOrdersToBePickedByUser(OrderStatus.PICKED, currentUser.getId());
+		List<Orders> result = orderRepository.findByStatusAndPicker(OrderStatus.PICKED, currentUser.getId());
 		
 		return result;
 	}
 
-	
+	@Override
+	public List<Orders> getUserPendingOrder(UserPrincipal currentUser) {
+		
+		List<Orders> result = orderRepository.findByStatusAndOwner(OrderStatus.PENDING, currentUser.getId());
+		
+		return result;
+		
+	}
+
+	@Override
+	public List<Orders> getUserPickedUpOrders(UserPrincipal currentUser) {
+		
+		List<Orders> result = orderRepository.findByStatusAndOwner(OrderStatus.PICKED, currentUser.getId());
+		
+		return result;
+	}
+
+	@Override
+	public List<Orders> getUserDeliveryOrders(UserPrincipal currentUser) {
+		
+		List<Orders> result = orderRepository.findByStatusAndOwner(OrderStatus.INDELIVERY, currentUser.getId());
+		
+		return result;
+		
+	}
+
+	@Override
+	public List<Orders> getOrdersToBeDeliverByUser(UserPrincipal currentUser) {
+		List<Orders> result = orderRepository.findByStatusAndPicker(OrderStatus.INDELIVERY, currentUser.getId());
+		
+		return result;
+		
+	}
 	
 }

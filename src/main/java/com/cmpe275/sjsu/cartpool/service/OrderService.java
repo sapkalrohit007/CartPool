@@ -16,6 +16,10 @@ public interface OrderService {
 	public List<Orders> getAllOrders();
 	public List<Orders> getOrders(Integer orderId,String poolName);
 	public List<Orders> findMyPoolOrders(UserPrincipal currentUser);
-	public CommonMessage ordersPickedBy(OrderIDRequest orderIDRequest,  UserPrincipal currentUser);
-	public List<Orders> ordersToBePickedByUser(UserPrincipal currentUser);
+	public CommonMessage markUserToPickTheOrders(OrderIDRequest orderIDRequest,  UserPrincipal currentUser);
+	public List<Orders> getUserPendingOrder(UserPrincipal currentUser);
+	public List<Orders> getUserPickedUpOrders(UserPrincipal currentUser);
+	public List<Orders> getOrdersToBePickedByUser(UserPrincipal currentUser);
+	public List<Orders> getUserDeliveryOrders(UserPrincipal currentUser);
+	public List<Orders> getOrdersToBeDeliverByUser(UserPrincipal currentUser);
 }

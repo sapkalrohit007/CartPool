@@ -61,22 +61,53 @@ public class OrderController {
 	}
 	
 	@PreAuthorize("hasRole('POOLER')")
-	@PostMapping("/user_will_pick_up")
-	public CommonMessage ordersPickedBy(
+	@PostMapping("/user/will/pickup")
+	public CommonMessage markUserToPickTheOrders(
 			@RequestBody OrderIDRequest orderIDRequest,
 			@CurrentUser UserPrincipal currentUser) {
 		
-		return orderService.ordersPickedBy(orderIDRequest, currentUser);
+		return orderService.markUserToPickTheOrders(orderIDRequest, currentUser);
 		
 	}
 	
 	
 	@PreAuthorize("hasRole('POOLER')")
-	@GetMapping("/pick_up")
-	public List<Orders> ordersToBePickedByUser(@CurrentUser UserPrincipal currentUser){
+	@GetMapping("/user/placed")
+	public List<Orders> getUserPendingOrder(@CurrentUser UserPrincipal currentUser){
 		
-		return orderService.ordersToBePickedByUser(currentUser);
+		return orderService.getUserPendingOrder(currentUser);
+	}
+	
+	@PreAuthorize("hasRole('POOLER')")
+	@GetMapping("/user/of/pick-up")
+	public List<Orders> getUserPickedUpOrders(@CurrentUser UserPrincipal currentUser){
+		
+		return orderService.getUserPickedUpOrders(currentUser);
+	}
+	
+	
+	@PreAuthorize("hasRole('POOLER')")
+	@GetMapping("/user/to/pick-up")
+	public List<Orders> getOrdersToBePickedByUser(@CurrentUser UserPrincipal currentUser){
+		
+		return orderService.getOrdersToBePickedByUser(currentUser);
 		
 	}
+	
+
+	@PreAuthorize("hasRole('POOLER')")
+	@GetMapping("/user/of/deliver")
+	public List<Orders> getUserDeliveryOrders(@CurrentUser UserPrincipal currentUser){
+		
+		return orderService.getUserDeliveryOrders(currentUser);
+	}
+	
+	@PreAuthorize("hasRole('POOLER')")
+	@GetMapping("/user/to/deliver")
+	public List<Orders> getOrdersToBeDeliverByUser(@CurrentUser UserPrincipal currentUser){
+		
+		return orderService.getOrdersToBeDeliverByUser(currentUser);
+	}
+	
 	
 }
