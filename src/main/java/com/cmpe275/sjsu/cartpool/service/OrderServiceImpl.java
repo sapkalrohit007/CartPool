@@ -112,16 +112,23 @@ public class OrderServiceImpl implements OrderService {
 		Optional<User> owner = userRepository.findByEmail(currentUser.getEmail());
 		List<Orders> orders = new ArrayList<>();
 		Pool pool = owner.get().getPool();
-		if (pool != null) {
+		if (pool != null)
+		{
+			//Get pool members
 			List<User> members = pool.getMembers();
 			members.add(pool.getOwner());
 			int i;
+			//Remove the member who called the api
 			for(i=0;i<members.size();i++)
 				if(members.get(i).getId() == owner.get().getId())
 					break;
 			members.remove(i);
+			//For each member get its list of PENDING orders
 			for (User member : members) {
-				orders.addAll(member.getOrders());
+				List<Orders> userOrders = member.getOrders();
+				for(Orders order : userOrders)
+					if(order.getStatus() == OrderStatus.PENDING)
+						orders.add(order);
 			}
 			return orders;
 		}
