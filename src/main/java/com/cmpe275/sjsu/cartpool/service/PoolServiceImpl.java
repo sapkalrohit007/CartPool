@@ -49,6 +49,7 @@ public class PoolServiceImpl implements PoolService{
 		}
 		
 		pool.setOwner(user.get());
+		pool.addMember(user.get());
 		
 		Pool responsePool = poolRepository.save(pool);
 		
