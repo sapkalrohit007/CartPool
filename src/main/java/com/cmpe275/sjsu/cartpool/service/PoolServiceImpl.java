@@ -50,9 +50,9 @@ public class PoolServiceImpl implements PoolService{
 		
 		pool.setOwner(user.get());
 		pool.addMember(user.get());
-		
+		user.get().setPool(pool);
 		Pool responsePool = poolRepository.save(pool);
-		
+		System.out.println(responsePool);
 		return responsePool;
 	}
 
@@ -242,5 +242,13 @@ public class PoolServiceImpl implements PoolService{
 	public List<Pool> getAllPool() {
 		return poolRepository.findAll();
 	}
-		 
+	
+	@Override
+	public Pool getMyPool(UserPrincipal userPrincipal) {
+		Optional<User> user = userRepository.findByEmail(userPrincipal.getEmail());
+		if(user.get().getPool()!=null) {
+			return user.get().getPool();
+		}
+		throw new BadRequestException("You are not part of any pool yet!!! Please join some pool");
+	}		 
 }

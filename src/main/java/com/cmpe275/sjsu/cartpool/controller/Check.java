@@ -1,6 +1,7 @@
 package com.cmpe275.sjsu.cartpool.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class Check {
 
 	@PreAuthorize("hasRole('ADMIN')")

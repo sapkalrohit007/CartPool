@@ -16,4 +16,5 @@ public interface PoolService {
 	public CommonMessage leaveGroup(UserPrincipal currentUser);
 	public List<Pool> getPool(String poolName, String neighborhoodName, String zipcode);
 	public List<Pool> getAllPool();
+	public Pool getMyPool(UserPrincipal userPrincipal);
 }

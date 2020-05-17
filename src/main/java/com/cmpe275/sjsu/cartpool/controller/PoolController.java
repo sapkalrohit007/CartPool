@@ -85,6 +85,11 @@ public class PoolController {
 		return poolService.getAllPool();
 	}
 	
+	@GetMapping("/mypool")
+	public Pool myPool(@CurrentUser UserPrincipal currentUser) {
+		return poolService.getMyPool(currentUser);
+	}
+	
 	
 }
 
