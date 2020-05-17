@@ -54,14 +54,14 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Autowired
     private EmailSenderService emailSenderService;
-	
+
 	@Autowired
 	private EmailConfig emailConfig;
-	
+
 	@Autowired
 	private OrderDeliveryConfirmationRepository orderDeliveryConfirmationRepository;
-	
-	
+
+
 	@Override
 	public Orders placeOrder(int storeId, List<ProductOrder> products, UserPrincipal currentUser) {
 		Optional<Store> store = storeRepository.findById(storeId);
@@ -71,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
 		if(owner.get().getPool()==null) {
 			throw new BadRequestException("Please join some pool to place the order...Without pool you are not allowed to place order...Thanks");
 		}
-		
+
 		if(!store.isPresent()) {
 			throw new BadRequestException("Store with given Id is not present");
 		}
@@ -215,11 +215,11 @@ public class OrderServiceImpl implements OrderService {
 				theOrder.get().setStatus(OrderStatus.PICKED);
 				theOrder.get().setPicker(theUser);
 			}
-			
+
 			theUser.addPickUpOrder(theOrder.get());
-			
+
 		}
-		
+
 		try {
 			userRepository.save(theUser);
 		}catch(Exception e) {
@@ -235,42 +235,42 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<Orders> getOrdersToBePickedByUser(UserPrincipal currentUser) {
-		
+
 		List<Orders> result = orderRepository.findByStatusAndPicker(OrderStatus.PICKED, currentUser.getId());
-		
+
 		return result;
 	}
 
 	@Override
 	public List<Orders> getUserPendingOrder(UserPrincipal currentUser) {
-		
+
 		List<Orders> result = orderRepository.findByStatusAndOwner(OrderStatus.PENDING, currentUser.getId());
-		
+
 		return result;
-		
+
 	}
 
 	@Override
 	public List<Orders> getUserPickedUpOrders(UserPrincipal currentUser) {
-		
+
 		List<Orders> result = orderRepository.findByStatusAndOwner(OrderStatus.PICKED, currentUser.getId());
-		
+
 		return result;
 	}
 
 	@Override
 	public List<Orders> getUserDeliveryOrders(UserPrincipal currentUser) {
-		
+
 		List<Orders> result = orderRepository.findByStatusAndOwner(OrderStatus.INDELIVERY, currentUser.getId());
-		
+
 		return result;
-		
+
 	}
 
 	@Override
 	public List<Orders> getOrdersToBeDeliverByUser(UserPrincipal currentUser) {
 		List<Orders> result = orderRepository.findByStatusAndPicker(OrderStatus.INDELIVERY, currentUser.getId());
-		
+
 		return result;
 	}
 
@@ -281,22 +281,22 @@ public class OrderServiceImpl implements OrderService {
 		}
 		Orders order = orderToBeDelivered.get();
 		order.setStatus(OrderStatus.DELIVERED);
-		
+
 		int pickerCredit = order.getPicker().getCredit();
 		pickerCredit = pickerCredit + 1;
 		order.getPicker().setCredit(pickerCredit);
-		
+
 		int ownersCredit = order.getOwner().getCredit();
 		ownersCredit = ownersCredit -1;
 		order.getOwner().setCredit(ownersCredit);
-		
+
 		orderRepository.save(order);
-		
+
 		OrderDeliveryConfirmationToken token = new OrderDeliveryConfirmationToken(order);
-		
+
 		orderDeliveryConfirmationRepository.save(token);
-	
-		
+
+
 		//this will trigger an email to the owner of the order.
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(order.getOwner().getEmail());
@@ -308,20 +308,20 @@ public class OrderServiceImpl implements OrderService {
         +"http://localhost:8080/order/reject-order-received?token="+token.getConfirmationToken());
 
         emailSenderService.sendEmail(mailMessage);
-        
+
 		return new CommonMessage("Thank you for delivering order....");
 	}
-	
+
 	@Override
 	public String confirmOrderReceived(String confirmationToken) {
 		OrderDeliveryConfirmationToken token = orderDeliveryConfirmationRepository.findByConfirmationToken(confirmationToken);
         if(token != null)
-        {	
+        {
         	Optional<Orders> order = orderRepository.findById(token.getOrder().getId());
             if(order.isPresent()) {
-            	
+
             	List<OrderDetails> orderDetails = order.get().getOrderDetail();
-            	
+
             	for (OrderDetails orderDetail: orderDetails) {
             		orderDetailsRepository.delete(orderDetail);
             	}
@@ -336,30 +336,105 @@ public class OrderServiceImpl implements OrderService {
 	public String rejectOrderReceived(String confirmationToken) {
 		OrderDeliveryConfirmationToken token = orderDeliveryConfirmationRepository.findByConfirmationToken(confirmationToken);
         if(token != null)
-        {	
+        {
         	Optional<Orders> newOrder = orderRepository.findById(token.getOrder().getId());
             if(newOrder.isPresent()) {
-            	
+
             	Orders order = newOrder.get();
             	order.setPicker(null);
             	order.setStatus(OrderStatus.PENDING);
-            	
-            	
+
+
             	int pickerCredit = order.getPicker().getCredit();
         		pickerCredit = pickerCredit - 1;
         		order.getPicker().setCredit(pickerCredit);
-        		
+
         		int ownersCredit = order.getOwner().getCredit();
         		ownersCredit = ownersCredit + 1;
         		order.getOwner().setCredit(ownersCredit);
-        		
+
         		orderRepository.save(order);
-        		
+
             }
             orderDeliveryConfirmationRepository.delete(token);
             return "Thank you for confirming....\nYour order will be delivered by some other pooler...\n\nWe will investigate why your order is not delivered....\n\nWe are extremely sorry for inconvinience..";
         }
         return "invalid URL";
+	}
+
+	@Override
+	public Orders setOrderInDelivery(Integer orderId) {
+		Optional<Orders> isOrder = orderRepository.findById(orderId);
+		if(isOrder.isPresent())
+		{
+			Orders order = isOrder.get();
+			if(order.getStatus() == OrderStatus.PICKED) {
+				order.setStatus(OrderStatus.INDELIVERY);
+				orderRepository.save(order);
+				return order;
+			}
+			throw new BadRequestException("Cannot checkout unpicked order with id: "+orderId);
+		}
+		throw new BadRequestException("No order found with order id: "+orderId);
+	}
+
+	@Override
+	public void sendCheckoutMailToOwner(Integer orderId)
+	{
+		Optional<Orders> isOrder = orderRepository.findById(orderId);
+		if(isOrder.isPresent())
+		{
+			Orders order = isOrder.get();
+			User owner = order.getOwner();
+			User picker = order.getPicker();
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(owner.getEmail());
+			mailMessage.setSubject("Order "+orderId + " in on your way");
+			StringBuilder builder = new StringBuilder();
+			builder.append("Hello "+ owner.getName() + ",\n\n"
+					+ "Your order with id: "+orderId+" is being delivered to you by " +  picker.getName()
+					+ "\nThe order contains the following items:\n");
+			for(OrderDetails orderDetails : order.getOrderDetail())
+			{
+				builder.append(orderDetails.getProduct().getName() + "\n");
+			}
+			builder.append("\nRegards,\nCartpool");
+			mailMessage.setText(builder.toString());
+
+			emailSenderService.sendEmail(mailMessage);
+			return;
+		}
+		throw new BadRequestException("No order found with order id: "+orderId);
+	}
+
+	/* Not yet complete  */
+	@Override
+	public void sendCheckoutMailToPicker(Integer orderId)
+	{
+		Optional<Orders> isOrder = orderRepository.findById(orderId);
+		if(isOrder.isPresent())
+		{
+			Orders order = isOrder.get();
+			User owner = order.getOwner();
+			User picker = order.getPicker();
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(picker.getEmail());
+			mailMessage.setSubject("Order "+orderId + " details");
+			StringBuilder builder = new StringBuilder();
+			builder.append("Hello "+ picker.getName() + ",\n\n"
+					+ "Following are the details of Order "+orderId+":");
+
+			for(OrderDetails orderDetails : order.getOrderDetail())
+			{
+				builder.append(orderDetails.getProduct().getName() + "\n");
+			}
+			builder.append("\nRegards,\nCartpool");
+			mailMessage.setText(builder.toString());
+
+			emailSenderService.sendEmail(mailMessage);
+			return;
+		}
+		throw new BadRequestException("No order found with order id: "+orderId);
 	}
 	
 }

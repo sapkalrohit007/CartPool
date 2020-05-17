@@ -47,7 +47,7 @@ public class Store {
 //			inverseJoinColumns = @JoinColumn(name="product_id")
 //			)
 	@ManyToMany(mappedBy = "stores")
-	@JsonIgnoreProperties({"stores"})
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "stores"})
 	List<Product>product;
 	public Store() {
 		// TODO Auto-generated constructor stub
