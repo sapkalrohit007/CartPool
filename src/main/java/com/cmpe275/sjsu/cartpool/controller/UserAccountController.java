@@ -14,6 +14,7 @@ import com.cmpe275.sjsu.cartpool.service.UserService;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "*")
 public class UserAccountController {
 
 

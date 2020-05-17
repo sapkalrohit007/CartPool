@@ -1,16 +1,31 @@
 package com.cmpe275.sjsu.cartpool.service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import com.cmpe275.sjsu.cartpool.model.*;
-import com.cmpe275.sjsu.cartpool.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
+import com.cmpe275.sjsu.cartpool.error.NotFoundException;
+import com.cmpe275.sjsu.cartpool.model.OrderDetails;
+import com.cmpe275.sjsu.cartpool.model.OrderStatus;
+import com.cmpe275.sjsu.cartpool.model.Orders;
+import com.cmpe275.sjsu.cartpool.model.Pool;
+import com.cmpe275.sjsu.cartpool.model.Product;
+import com.cmpe275.sjsu.cartpool.model.Store;
+import com.cmpe275.sjsu.cartpool.model.User;
+import com.cmpe275.sjsu.cartpool.repository.OrderDetailsRepository;
+import com.cmpe275.sjsu.cartpool.repository.OrderRepository;
+import com.cmpe275.sjsu.cartpool.repository.PoolRepository;
+import com.cmpe275.sjsu.cartpool.repository.ProductRepository;
+import com.cmpe275.sjsu.cartpool.repository.StoreRepository;
+import com.cmpe275.sjsu.cartpool.repository.UserRepository;
+import com.cmpe275.sjsu.cartpool.requestpojo.OrderIDRequest;
 import com.cmpe275.sjsu.cartpool.requestpojo.ProductOrder;
+import com.cmpe275.sjsu.cartpool.responsepojo.CommonMessage;
 import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 
 @Service
@@ -125,4 +140,48 @@ public class OrderServiceImpl implements OrderService {
 		List<Orders> orders = orderRepository.findAll();
 		return orders;
 	}
+
+	@Override
+	public CommonMessage ordersPickedBy(OrderIDRequest orderIDRequest, UserPrincipal currentUser) {
+		
+		Optional<User> owner = 
+				userRepository.findByEmail(currentUser.getEmail());
+		
+		User theUser = null;
+		if(owner.isPresent()) {
+			theUser = owner.get();
+		}else {
+			throw new NotFoundException("User not found!");
+		}
+		
+		List<Integer> orderIds = orderIDRequest.getOrderIds();
+		
+		Iterator iterator = orderIds.iterator();
+		
+		while(iterator.hasNext()) {
+			
+			Integer orderID = (Integer) iterator.next();
+			
+			Optional<Orders> theOrder = orderRepository.findById(orderID);
+				
+			if(theOrder.isPresent()) {
+				
+				theOrder.get().setStatus(OrderStatus.PICKED);
+				theOrder.get().setPicker(theUser);
+				
+				orderRepository.save(theOrder.get());
+			}
+			
+		}
+		
+		CommonMessage result = new CommonMessage(
+				"Thank you for deciding to pick the fellow pooler orders!");
+		
+		return result;
+		
+	}
+
+	
+
+	
 }

@@ -1,20 +1,30 @@
 package com.cmpe275.sjsu.cartpool.controller;
 
-import com.cmpe275.sjsu.cartpool.requestpojo.OrderStatusRequest;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe275.sjsu.cartpool.model.Orders;
+import com.cmpe275.sjsu.cartpool.requestpojo.OrderIDRequest;
+import com.cmpe275.sjsu.cartpool.requestpojo.OrderStatusRequest;
 import com.cmpe275.sjsu.cartpool.requestpojo.ProductOrderRequest;
+import com.cmpe275.sjsu.cartpool.responsepojo.CommonMessage;
 import com.cmpe275.sjsu.cartpool.security.CurrentUser;
 import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 import com.cmpe275.sjsu.cartpool.service.OrderService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/order") 
+@CrossOrigin(origins = "*")
 public class OrderController {
 	
 	@Autowired
@@ -43,4 +53,17 @@ public class OrderController {
 							   @RequestParam(name = "poolname",required = false) String poolName){
 		return orderService.getOrders(orderId,poolName);
 	}
+	
+	@PreAuthorize("hasRole('POOLER')")
+	@PostMapping("/pick_by")
+	public CommonMessage ordersPickedBy(
+			@RequestBody OrderIDRequest orderIDRequest,
+			@CurrentUser UserPrincipal currentUser) {
+		
+		return orderService.ordersPickedBy(orderIDRequest, currentUser);
+		
+	}
+	
+	
+	
 }
