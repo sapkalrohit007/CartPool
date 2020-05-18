@@ -290,10 +290,13 @@ public class OrderServiceImpl implements OrderService {
 		ownersCredit = ownersCredit -1;
 		order.getOwner().setCredit(ownersCredit);
 
-		orderRepository.save(order);
-
 		OrderDeliveryConfirmationToken token = new OrderDeliveryConfirmationToken(order);
-
+		
+		orderRepository.save(order);
+		
+		System.out.println(token.getConfirmationToken());
+		System.out.println(token.getCreatedDate());
+		System.out.println(token.getTokenid());
 		orderDeliveryConfirmationRepository.save(token);
 
 

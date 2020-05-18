@@ -27,7 +27,7 @@ public class OrderDeliveryConfirmationToken {
 	    @Temporal(TemporalType.TIMESTAMP)
 	    private Date createdDate;
 
-	    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+	    @OneToOne(targetEntity = Orders.class, fetch = FetchType.EAGER)
 	    @JoinColumn(nullable = false, name = "order_id")
 	    private Orders order;
 	    
