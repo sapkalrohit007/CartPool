@@ -339,25 +339,30 @@ public class OrderServiceImpl implements OrderService {
 		OrderDeliveryConfirmationToken token = orderDeliveryConfirmationRepository.findByConfirmationToken(confirmationToken);
         if(token != null)
         {
+        	
         	Optional<Orders> newOrder = orderRepository.findById(token.getOrder().getId());
+        	System.out.println("inside1");
             if(newOrder.isPresent()) {
-
+            	
             	Orders order = newOrder.get();
-            	order.setPicker(null);
-            	order.setStatus(OrderStatus.PENDING);
-
-
+           		
             	int pickerCredit = order.getPicker().getCredit();
         		pickerCredit = pickerCredit - 1;
         		order.getPicker().setCredit(pickerCredit);
 
+     
+        		
         		int ownersCredit = order.getOwner().getCredit();
         		ownersCredit = ownersCredit + 1;
         		order.getOwner().setCredit(ownersCredit);
-
+        		
+            	order.setPicker(null);
+            	order.setStatus(OrderStatus.PENDING);
+        		
         		orderRepository.save(order);
 
             }
+            System.out.println("inside3");
             orderDeliveryConfirmationRepository.delete(token);
             return "Thank you for confirming....\nYour order will be delivered by some other pooler...\n\nWe will investigate why your order is not delivered....\n\nWe are extremely sorry for inconvinience..";
         }
