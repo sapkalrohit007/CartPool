@@ -177,6 +177,9 @@ public class PoolServiceImpl implements PoolService{
 		 if(token != null){
 			 Optional<User> user = userRepository.findByEmail(token.getUser().getEmail());
 	         if(user.isPresent()) {
+	        	if(user.get().getPool()!= null) {
+	        		return "We are sorry....User not added to your pool as user has already joined another pool";
+	        	}
 	            token.setIsConfirmed(true);
 	            referenceConfirmationRepository.save(token);
 	            
