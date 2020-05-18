@@ -1,9 +1,6 @@
 package com.cmpe275.sjsu.cartpool.service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -148,6 +145,8 @@ public class OrderServiceImpl implements OrderService {
 					if(order.getStatus() == OrderStatus.PENDING)
 						orders.add(order);
 			}
+
+			orders.sort(new OrderComparator());
 			return orders;
 		}
 		throw new BadRequestException("No pool associated to the user");
@@ -428,5 +427,17 @@ public class OrderServiceImpl implements OrderService {
 		emailSenderService.sendEmail(mailMessage);
 		return;
 	}
-	
+
+	class OrderComparator implements Comparator<Orders>
+	{
+		public int compare(Orders a, Orders b)
+		{
+			if (a.getCreatedDate().before(b.getCreatedDate()))
+				return -1;
+			else if(a.getCreatedDate().after(b.getCreatedDate()))
+				return 1;
+			else
+				return 0;
+		}
+	}
 }
