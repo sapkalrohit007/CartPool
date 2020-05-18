@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
 			.authorizeRequests()
-				.antMatchers("/auth/**","/user/**","/pool/confirm-request-owner/**","/pool/confirm-request/**","/pool/reject-request/**","/order/confirm-order-received","/order/reject-order-received")
+				.antMatchers("/auth/**","/user/**","/pool/confirm-request-owner/**","/pool/confirm-request/**","/pool/reject-request/**","/order/confirm-order-received/**","/order/reject-order-received/**")
 					.permitAll()
 				.antMatchers(AUTH_WHITELIST).permitAll()
 				.anyRequest()

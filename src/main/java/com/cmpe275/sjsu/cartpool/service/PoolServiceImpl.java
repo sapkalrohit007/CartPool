@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.cmpe275.sjsu.cartpool.config.EmailConfig;
 import com.cmpe275.sjsu.cartpool.error.BadRequestException;
+import com.cmpe275.sjsu.cartpool.model.Orders;
 import com.cmpe275.sjsu.cartpool.model.Pool;
 import com.cmpe275.sjsu.cartpool.model.ReferenceConfirmation;
 import com.cmpe275.sjsu.cartpool.model.User;
+import com.cmpe275.sjsu.cartpool.repository.OrderRepository;
 import com.cmpe275.sjsu.cartpool.repository.PoolRepository;
 import com.cmpe275.sjsu.cartpool.repository.ReferenceConfirmationRepository;
 import com.cmpe275.sjsu.cartpool.repository.UserRepository;
@@ -34,6 +36,9 @@ public class PoolServiceImpl implements PoolService{
 	
 	@Autowired
 	private EmailConfig emailConfig;
+	
+	@Autowired
+	private OrderRepository orderRepository;
 	
 	@Override
 	public Pool createPool(UserPrincipal currentUser, Pool pool) {
@@ -211,6 +216,13 @@ public class PoolServiceImpl implements PoolService{
 		Optional<User> user = userRepository.findByEmail(userPrincipal.getEmail());
 		if(user.isPresent()) {
 			User currentUser = user.get();
+			
+			List<Orders> orders = orderRepository.findOrdersOfUser(currentUser.getId());
+			
+			if(orders.size()!=0) {
+				throw new BadRequestException("You have pending orders in pool...you can not leave the pool..");
+			}
+			
 			Pool pool = currentUser.getPool();
 			if(pool != null) {
 				pool.removeMember(currentUser);

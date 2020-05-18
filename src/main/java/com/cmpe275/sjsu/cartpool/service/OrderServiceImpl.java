@@ -385,6 +385,17 @@ public class OrderServiceImpl implements OrderService {
 	{
 		User owner = order.getOwner();
 		User picker = order.getPicker();
+		
+		if(owner.getEmail() == picker.getEmail()) {
+			
+			Optional<Orders> orderToBeDelivered = orderRepository.findById(order.getId());
+			
+			orderToBeDelivered.get().setStatus(OrderStatus.DELIVERED);
+			orderRepository.save(orderToBeDelivered.get());
+			
+			return;
+		}
+		
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(owner.getEmail());
 		mailMessage.setSubject("Order "+order.getId() + " in on your way");
@@ -408,6 +419,11 @@ public class OrderServiceImpl implements OrderService {
 	{
 		User owner = order.getOwner();
 		User picker = order.getPicker();
+		
+		if(owner.getEmail() == picker.getEmail()) {
+			return;
+		}
+		
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(picker.getEmail());
 		mailMessage.setSubject("Order "+order.getId() + " details");
