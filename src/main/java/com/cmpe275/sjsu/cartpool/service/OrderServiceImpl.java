@@ -289,10 +289,13 @@ public class OrderServiceImpl implements OrderService {
 		ownersCredit = ownersCredit -1;
 		order.getOwner().setCredit(ownersCredit);
 
-		orderRepository.save(order);
-
 		OrderDeliveryConfirmationToken token = new OrderDeliveryConfirmationToken(order);
-
+		
+		orderRepository.save(order);
+		
+		System.out.println(token.getConfirmationToken());
+		System.out.println(token.getCreatedDate());
+		System.out.println(token.getTokenid());
 		orderDeliveryConfirmationRepository.save(token);
 
 
@@ -336,25 +339,30 @@ public class OrderServiceImpl implements OrderService {
 		OrderDeliveryConfirmationToken token = orderDeliveryConfirmationRepository.findByConfirmationToken(confirmationToken);
         if(token != null)
         {
+        	
         	Optional<Orders> newOrder = orderRepository.findById(token.getOrder().getId());
+        	System.out.println("inside1");
             if(newOrder.isPresent()) {
-
+            	
             	Orders order = newOrder.get();
-            	order.setPicker(null);
-            	order.setStatus(OrderStatus.PENDING);
-
-
+           		
             	int pickerCredit = order.getPicker().getCredit();
         		pickerCredit = pickerCredit - 1;
         		order.getPicker().setCredit(pickerCredit);
 
+     
+        		
         		int ownersCredit = order.getOwner().getCredit();
         		ownersCredit = ownersCredit + 1;
         		order.getOwner().setCredit(ownersCredit);
-
+        		
+            	order.setPicker(null);
+            	order.setStatus(OrderStatus.PENDING);
+        		
         		orderRepository.save(order);
 
             }
+            System.out.println("inside3");
             orderDeliveryConfirmationRepository.delete(token);
             return "Thank you for confirming....\nYour order will be delivered by some other pooler...\n\nWe will investigate why your order is not delivered....\n\nWe are extremely sorry for inconvinience..";
         }
@@ -382,6 +390,17 @@ public class OrderServiceImpl implements OrderService {
 	{
 		User owner = order.getOwner();
 		User picker = order.getPicker();
+		
+		if(owner.getEmail() == picker.getEmail()) {
+			
+			Optional<Orders> orderToBeDelivered = orderRepository.findById(order.getId());
+			
+			orderToBeDelivered.get().setStatus(OrderStatus.DELIVERED);
+			orderRepository.save(orderToBeDelivered.get());
+			
+			return;
+		}
+		
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(owner.getEmail());
 		mailMessage.setSubject("Order "+order.getId() + " in on your way");
@@ -405,6 +424,11 @@ public class OrderServiceImpl implements OrderService {
 	{
 		User owner = order.getOwner();
 		User picker = order.getPicker();
+		
+		if(owner.getEmail() == picker.getEmail()) {
+			return;
+		}
+		
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(picker.getEmail());
 		mailMessage.setSubject("Order "+order.getId() + " details");

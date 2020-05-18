@@ -19,4 +19,8 @@ public interface OrderRepository extends JpaRepository<Orders, Integer>{
 	
 	@Query("SELECT o from Orders o where o.status=?1 and o.owner.id=?2 and o.picker.id=?3 ORDER BY o.createdDate")
 	List<Orders> findByStatusAndOwnerAndPicker(OrderStatus status,Long owner,Long picker);
+	
+	@Query("SELECT o from Orders o where o.owner.id=?1 and o.status != 'DELIVERED'")
+	List<Orders> findOrdersOfUser(Long id);
+	
 }

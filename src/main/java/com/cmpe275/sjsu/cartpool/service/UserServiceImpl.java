@@ -139,5 +139,10 @@ public class UserServiceImpl implements UserService{
 
 	}
 
+	@Override
+	public User getUserDetails(UserPrincipal currentUser) {
+		return userRepository.findById(currentUser.getId()).get();
+	}
+
 
 }
