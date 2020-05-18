@@ -72,11 +72,12 @@ public class OrderController {
 		
 	}
 
-	@PatchMapping("/checkout")
-	public Orders checkoutOrder(@RequestParam(name="orderid",required = true) Integer orderId)
+	@PatchMapping("/checkout/{orderId}")
+	public Orders checkoutOrder(@PathVariable Integer orderId)
 	{
 		Orders order = orderService.setOrderInDelivery(orderId);
-		orderService.sendCheckoutMailToOwner(orderId);
+		orderService.sendCheckoutMailToOwner(order);
+		orderService.sendCheckoutMailToPicker(order);
 		return order;
 	}
 	
