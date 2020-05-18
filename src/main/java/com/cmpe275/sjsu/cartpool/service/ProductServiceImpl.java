@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.cmpe275.sjsu.cartpool.config.S3Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import com.cmpe275.sjsu.cartpool.model.Unit;
 import com.cmpe275.sjsu.cartpool.repository.ProductRepository;
 import com.cmpe275.sjsu.cartpool.repository.StoreRepository;
 import com.cmpe275.sjsu.cartpool.requestpojo.ProductRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -28,6 +30,9 @@ public class ProductServiceImpl implements ProductService{
     
     @Autowired
     private StoreRepository storeRepository;
+
+    @Autowired
+    private S3Services s3Services;
 
     @Override
     public List<Product> getAllProducts() {
@@ -59,20 +64,27 @@ public class ProductServiceImpl implements ProductService{
 	    	List<Integer> storeIds = productRequest.getStores();
 	    	
 	    	Product theProduct = new Product(name,description,imageUrl,brand,unit,price);
-	    	
-	    	for(Integer storeId : storeIds) {
-	    		
-	    		Optional<Store> theStore = storeRepository.findById(storeId);
-	    		
-	    		if(theStore.isPresent()) {
-	    			theProduct.addStore(theStore.get());
-	    		}
-	    	}
+
+	    	if(storeIds != null)
+	    	{
+				for (Integer storeId : storeIds) {
+
+					Optional<Store> theStore = storeRepository.findById(storeId);
+
+					if (theStore.isPresent()) {
+						theProduct.addStore(theStore.get());
+					}
+				}
+			}
 	
     		return productRepository.save(theProduct);
-    	}catch(BadRequestException e) {
+    	}
+    	catch(BadRequestException e) {
+    		e.printStackTrace();
     		throw new BadRequestException("Invalid input parameters");
-    	}catch(NullPointerException e) {
+    	}
+    	catch(NullPointerException e) {
+    		e.printStackTrace();
 			throw new BadRequestException("Invalid request - bad input parameters");
 		}
         
@@ -155,8 +167,10 @@ public class ProductServiceImpl implements ProductService{
             	for(Store theStore : stores) {
             		theStore.removeProduct(existingProduct);
             	}
-            	
+
+            	String imageUrl = existingProduct.getImageUrl();
                 productRepository.deleteById(productId);
+                s3Services.deleteFile(imageUrl);
                 return existingProduct;
             }
             else
@@ -217,4 +231,11 @@ public class ProductServiceImpl implements ProductService{
     	
     	return existingProduct.getStores();
     }
+
+	@Override
+	public Product addProductWithImage(ProductRequest productRequest, MultipartFile file) {
+		String imageUrl = s3Services.uploadFile(file);
+		productRequest.setImageUrl(imageUrl);
+		return addProduct(productRequest);
+	}
 }

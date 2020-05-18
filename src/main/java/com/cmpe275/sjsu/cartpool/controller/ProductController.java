@@ -2,21 +2,17 @@ package com.cmpe275.sjsu.cartpool.controller;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cmpe275.sjsu.cartpool.model.Product;
 import com.cmpe275.sjsu.cartpool.requestpojo.ProductRequest;
 import com.cmpe275.sjsu.cartpool.service.ProductService;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/product")
@@ -50,6 +46,8 @@ public class ProductController
         return productService.getProductByName(productName);
     }
 
+    @Deprecated
+    @ApiOperation("API to add product without the support for image upload. This API is no longer used. Use /product/add")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public Product addProduct(@RequestBody ProductRequest productRequest)
@@ -69,5 +67,13 @@ public class ProductController
     public Product deleteProduct(@PathVariable int sku)
     {
         return productService.deleteProduct(sku);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/add",consumes = {"multipart/form-data"})
+    public Product addProductWithImage(@RequestPart("product") String productJson, @RequestPart("file")MultipartFile file) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ProductRequest product = mapper.readValue(productJson,ProductRequest.class);
+        return productService.addProductWithImage(product,file);
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cmpe275.sjsu.cartpool.model.Product;
 import com.cmpe275.sjsu.cartpool.requestpojo.ProductRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
     public List<Product> getAllProducts();
@@ -13,4 +14,5 @@ public interface ProductService {
     public Product deleteProduct(int productId);
     public List<Product> getProductsInStore(int storeId);
     public List<Product> getProductByName(String name);
+    public Product addProductWithImage(ProductRequest productRequest, MultipartFile file);
 }

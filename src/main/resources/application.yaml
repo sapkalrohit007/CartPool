@@ -38,6 +38,12 @@ app:
     
 email:
     url: http://localhost:8080
+
+aws:
+    endpointUrl: https://s3-us-west-1.amazonaws.com
+    bucket: mybucket
+    accessKey: access
+    secretKey: secret
       
 #spring.mail.host = smtp.gmail.com
 #spring.mail.port = 587
