@@ -379,62 +379,51 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public void sendCheckoutMailToOwner(Integer orderId)
+	public void sendCheckoutMailToOwner(Orders order)
 	{
-		Optional<Orders> isOrder = orderRepository.findById(orderId);
-		if(isOrder.isPresent())
+		User owner = order.getOwner();
+		User picker = order.getPicker();
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(owner.getEmail());
+		mailMessage.setSubject("Order "+order.getId() + " in on your way");
+		StringBuilder builder = new StringBuilder();
+		builder.append("Hello "+ owner.getName() + ",\n\n"
+				+ "Your order with id: "+ order.getId() +" is being delivered to you by " +  picker.getName()
+				+ "\nThe order contains the following items:\n");
+		for(OrderDetails orderDetails : order.getOrderDetail())
 		{
-			Orders order = isOrder.get();
-			User owner = order.getOwner();
-			User picker = order.getPicker();
-			SimpleMailMessage mailMessage = new SimpleMailMessage();
-			mailMessage.setTo(owner.getEmail());
-			mailMessage.setSubject("Order "+orderId + " in on your way");
-			StringBuilder builder = new StringBuilder();
-			builder.append("Hello "+ owner.getName() + ",\n\n"
-					+ "Your order with id: "+orderId+" is being delivered to you by " +  picker.getName()
-					+ "\nThe order contains the following items:\n");
-			for(OrderDetails orderDetails : order.getOrderDetail())
-			{
-				builder.append(orderDetails.getProduct().getName() + "\n");
-			}
-			builder.append("\nRegards,\nCartpool");
-			mailMessage.setText(builder.toString());
-
-			emailSenderService.sendEmail(mailMessage);
-			return;
+			builder.append(orderDetails.getProduct().getName() + "     " + orderDetails.getQuantity()  + "X" + "\n");
 		}
-		throw new BadRequestException("No order found with order id: "+orderId);
+		builder.append("\nRegards,\nCartpool");
+		mailMessage.setText(builder.toString());
+
+		emailSenderService.sendEmail(mailMessage);
+		return;
 	}
 
-	/* Not yet complete  */
 	@Override
-	public void sendCheckoutMailToPicker(Integer orderId)
+	public void sendCheckoutMailToPicker(Orders order)
 	{
-		Optional<Orders> isOrder = orderRepository.findById(orderId);
-		if(isOrder.isPresent())
+		User owner = order.getOwner();
+		User picker = order.getPicker();
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(picker.getEmail());
+		mailMessage.setSubject("Order "+order.getId() + " details");
+		StringBuilder builder = new StringBuilder();
+		builder.append("Hello "+ picker.getName() + ",\n\n"
+				+ "Following are the details of Order "+order.getId()+":\n\n");
+		builder.append("Order owner: " + owner.getName());
+		builder.append("\nDelivery address: " + owner.getAddress());
+		builder.append("\n\nProduct details:\n");
+		for(OrderDetails orderDetails : order.getOrderDetail())
 		{
-			Orders order = isOrder.get();
-			User owner = order.getOwner();
-			User picker = order.getPicker();
-			SimpleMailMessage mailMessage = new SimpleMailMessage();
-			mailMessage.setTo(picker.getEmail());
-			mailMessage.setSubject("Order "+orderId + " details");
-			StringBuilder builder = new StringBuilder();
-			builder.append("Hello "+ picker.getName() + ",\n\n"
-					+ "Following are the details of Order "+orderId+":");
-
-			for(OrderDetails orderDetails : order.getOrderDetail())
-			{
-				builder.append(orderDetails.getProduct().getName() + "\n");
-			}
-			builder.append("\nRegards,\nCartpool");
-			mailMessage.setText(builder.toString());
-
-			emailSenderService.sendEmail(mailMessage);
-			return;
+			builder.append(orderDetails.getProduct().getName() + "     " + orderDetails.getQuantity()  + "X" + "\n");
 		}
-		throw new BadRequestException("No order found with order id: "+orderId);
+		builder.append("\nRegards,\nCartpool");
+		mailMessage.setText(builder.toString());
+
+		emailSenderService.sendEmail(mailMessage);
+		return;
 	}
 	
 }

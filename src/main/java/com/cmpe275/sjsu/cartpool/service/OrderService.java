@@ -25,6 +25,6 @@ public interface OrderService {
 	public String confirmOrderReceived(String token);
 	public String rejectOrderReceived(String confirmationToken);
 	public Orders setOrderInDelivery(Integer orderId);
-	public void sendCheckoutMailToOwner(Integer orderId);
-	public void sendCheckoutMailToPicker(Integer orderId);
+	public void sendCheckoutMailToOwner(Orders order);
+	public void sendCheckoutMailToPicker(Orders order);
 }
