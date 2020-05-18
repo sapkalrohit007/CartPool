@@ -71,7 +71,8 @@ public class ProductController
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/add",consumes = {"multipart/form-data"})
-    public Product addProductWithImage(@RequestPart("product") String productJson, @RequestPart("file")MultipartFile file) throws JsonProcessingException {
+    public Product addProductWithImage(@RequestPart(name = "product", required = true) String productJson,
+                                       @RequestPart(name = "file", required = true)MultipartFile file) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ProductRequest product = mapper.readValue(productJson,ProductRequest.class);
         return productService.addProductWithImage(product,file);
