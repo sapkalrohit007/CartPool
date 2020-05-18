@@ -88,7 +88,8 @@ public class OrderController {
 	}
 	
 	@PreAuthorize("hasRole('POOLER')")
-	@GetMapping("/user/of/pick-up")
+	@GetMapping("/"
+			+ "")
 	public List<Orders> getUserPickedUpOrders(@CurrentUser UserPrincipal currentUser){
 		
 		return orderService.getUserPickedUpOrders(currentUser);
@@ -96,7 +97,7 @@ public class OrderController {
 	
 	
 	@PreAuthorize("hasRole('POOLER')")
-	@GetMapping("/user/to/pick-up")
+	@GetMapping("/user/to/pickup")
 	public List<Orders> getOrdersToBePickedByUser(@CurrentUser UserPrincipal currentUser){
 		
 		return orderService.getOrdersToBePickedByUser(currentUser);
