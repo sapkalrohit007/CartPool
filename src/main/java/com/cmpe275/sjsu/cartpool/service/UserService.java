@@ -11,4 +11,5 @@ public interface UserService {
 	public User registerUser(RegisterUserRequest registerUserRequest);
 	public String confirmUserAccount(String confirmationToken);
 	public boolean checkIfPoolLeader(UserPrincipal user);
+	public User getUserDetails(UserPrincipal currentUser);
 }

@@ -41,4 +41,9 @@ public class UserAccountController {
         return new BooleanResponse(userService.checkIfPoolLeader(currentUser));
     }
     
+    @GetMapping("/me")
+    public User getUserDetails(@CurrentUser UserPrincipal currentUser) {
+    	return userService.getUserDetails(currentUser);
+    }
+    
 }
