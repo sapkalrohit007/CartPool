@@ -20,7 +20,6 @@ import com.cmpe275.sjsu.cartpool.service.ProductService;
 
 @RestController
 @RequestMapping("/product")
-@CrossOrigin(origins = "*")
 public class ProductController
 {
     @Autowired

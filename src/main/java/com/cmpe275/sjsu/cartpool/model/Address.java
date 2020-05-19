@@ -45,7 +45,8 @@ public class Address {
 	}
 
 	public void setStreet(String street) {
-		this.street = street.trim();
+		if(street!=null)
+			this.street = street.trim();
 	}
 
 	public String getCity() {
@@ -53,7 +54,8 @@ public class Address {
 	}
 
 	public void setCity(String city) {
-		this.city = city.trim();
+		if(city!=null)
+			this.city = city.trim();
 	}
 
 	public String getState() {
@@ -61,7 +63,8 @@ public class Address {
 	}
 
 	public void setState(String state) {
-		this.state = state.trim();
+		if(state!=null)
+			this.state = state.trim();
 	}
 
 	public String getZip() {
@@ -69,7 +72,8 @@ public class Address {
 	}
 
 	public void setZip(String zip) {
-		this.zip = zip.trim();
+		if(zip!=null)
+			this.zip = zip.trim();
 	}
 
 	@Override

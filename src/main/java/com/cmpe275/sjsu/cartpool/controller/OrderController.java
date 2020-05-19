@@ -25,8 +25,7 @@ import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 import com.cmpe275.sjsu.cartpool.service.OrderService;
 
 @RestController
-@RequestMapping("/order") 
-@CrossOrigin(origins = "*")
+@RequestMapping("/order")
 public class OrderController {
 	
 	@Autowired

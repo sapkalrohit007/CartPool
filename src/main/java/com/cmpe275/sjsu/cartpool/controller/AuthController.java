@@ -11,8 +11,7 @@ import com.cmpe275.sjsu.cartpool.responsepojo.JWTResponse;
 import com.cmpe275.sjsu.cartpool.service.AuthService;
 
 @RestController
-@RequestMapping("/auth") 
-@CrossOrigin(origins = "*")
+@RequestMapping("/auth")
 public class AuthController {
 
 	@Autowired

@@ -23,7 +23,6 @@ import com.cmpe275.sjsu.cartpool.service.StoreService;
 
 @RestController
 @RequestMapping("/store")
-@CrossOrigin(origins = "*")
 public class StoreController {
 	
 	/*Exceptions thrown by this class

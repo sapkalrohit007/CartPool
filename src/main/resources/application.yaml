@@ -15,6 +15,29 @@ spring:
                 event:
                     merge:
                         entity_copy_observer: allow
+    security:
+        oauth2:
+            client:
+                registration:
+                    google:
+                        clientId: 300357883211-43cefd6lg55mikoer84k4qd8i4djjb2u.apps.googleusercontent.com
+                        clientSecret: MAYUiOLMFeGTVWXBN12bTD44
+                        redirectUri : "http://localhost:8080/oauth2/callback/google"
+                        scope:
+                            - email
+                            - profile
+                    facebook:
+                        clientId: 534549470764787
+                        clientSecret: 0521bb004f55304aed8aba39979dabda
+                        redirectUri : "http://localhost:8080/oauth2/callback/facebook"
+                        scope:
+                            - user:email
+                            - read:user
+                provider:
+                    facebook:
+                        authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
+                        tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
+                        userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
     mail:
         host: smtp.gmail.com
         port: 587
@@ -34,10 +57,18 @@ app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
     tokenExpirationMsec: 864000000
-
+  oauth2:
+    authorizedRedirectUris:
+        - http://localhost:3000
     
 email:
     url: http://localhost:8080
+
+address:
+    street : 2nd street
+    city : San Jose
+    state : CA
+    zip : 95112
       
 #spring.mail.host = smtp.gmail.com
 #spring.mail.port = 587

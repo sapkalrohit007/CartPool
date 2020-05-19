@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/pool")
-@CrossOrigin(origins = "*")
 public class PoolController {
 
 	@Autowired
