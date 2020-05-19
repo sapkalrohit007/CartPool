@@ -14,7 +14,6 @@ import com.cmpe275.sjsu.cartpool.security.UserPrincipal;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class Check {
 
 	@Autowired

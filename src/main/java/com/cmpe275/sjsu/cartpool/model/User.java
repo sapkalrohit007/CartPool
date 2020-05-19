@@ -65,7 +65,7 @@ public class User {
     @JsonIgnore
     private String providerId;
     
-    @Valid
+//    @Valid
     @Embedded
     private Address address;
     
@@ -206,6 +206,13 @@ public class User {
 			this.pickupOrders = new ArrayList<Orders>();
 		}
 		this.pickupOrders.add(order);
+	}
+
+	@Override
+	public String toString() {
+		return "User [name=" + name + ", nickName=" + nickName + ", email=" + email + ", emailVerified=" + emailVerified
+				+ ", password=" + password + ", provider=" + provider + ", role=" + role + ", providerId=" + providerId
+				+ ", address=" + address + ", credit=" + credit + "]";
 	}
 	
     
