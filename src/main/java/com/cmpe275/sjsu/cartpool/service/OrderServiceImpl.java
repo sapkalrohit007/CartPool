@@ -131,22 +131,19 @@ public class OrderServiceImpl implements OrderService {
 		{
 			//Get pool members
 			List<User> members = pool.getMembers();
-			members.add(pool.getOwner());
-			int i;
-			//Remove the member who called the api
-			for(i=0;i<members.size();i++)
-				if(members.get(i).getId() == owner.get().getId())
-					break;
-			members.remove(i);
-			//For each member get its list of PENDING orders
-			for (User member : members) {
-				List<Orders> userOrders = member.getOrders();
-				for(Orders order : userOrders)
-					if(order.getStatus() == OrderStatus.PENDING)
-						orders.add(order);
-			}
 
-			orders.sort(new OrderComparator());
+			if(members != null) {
+				//For each member get its list of PENDING orders
+				for (User member : members) {
+					List<Orders> userOrders = member.getOrders();
+					for (Orders order : userOrders)
+						if (order.getStatus() == OrderStatus.PENDING)
+							orders.add(order);
+				}
+				orders.sort(new OrderComparator());
+			}
+			else
+				throw new BadRequestException("Members empty");
 			return orders;
 		}
 		throw new BadRequestException("No pool associated to the user");
@@ -198,8 +195,12 @@ public class OrderServiceImpl implements OrderService {
 		}else {
 			throw new NotFoundException("User not found!");
 		}
-		
+
 		List<Integer> orderIds = orderIDRequest.getOrderIds();
+
+		if(orderIds.size() > 10){
+			throw new BadRequestException("You cannot pick more than 10 orders at a time!");
+		}
 		
 		Iterator iterator = orderIds.iterator();
 		
